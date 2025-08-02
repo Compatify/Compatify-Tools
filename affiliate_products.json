@@ -54,44 +54,4 @@
     "affiliate_link": "https://www.amazon.com/Syntech-Adapter-Thunderbolt-Compatible-MacBook/dp/B07CVX3516?crid=3RY967VVEM5QX&dib=eyJ2IjoiMSJ9.8BOqHU6KPYoIYKO3yXstSA6jvSHhZxfVCDff9a4LUfPog_m-zWOzJpkeeqcK5O42Pfpz34F2silE-gnTvTkrbAgmp8NBToJzzs1p2N9s15fSSPVw3qjznqFRUttmnGt6_u_64tPbH5l6N4_HQ4Y6MtgdXrkO97k8MDFJ1GYwd3thGK5yvJi4i5ZGpGUvJmp7_2iw5nw-b5QLHhsnntbZ3Y_IUiT5l91wBRx-syEE6Ek.PpGcY6wuZMiW4VXySzJVn9-WIXXlfm1wz3ew0exxi5k&dib_tag=se&keywords=USB-C%2Bto%2BUSB-A%2BAdapters&qid=1753931374&sprefix=usb-c%2Bto%2Busb-a%2Badapters%2Caps%2C143&sr=8-2&th=1&linkCode=ll1&tag=compatify-20&linkId=d20f9ce8566344acd9cccf194d005966&language=en_US&ref_=as_li_ss_tl",
     "image_url": "https://m.media-amazon.com/images/I/71fA-b5ozaL._AC_SX679_.jpg"
   },
-  {
-    "id": "prod006",
-    "name": "DDR4 RAM Upgrade Kit (16GB)",
-    "description": "Boost your system's performance with a 16GB (2x8GB) DDR4 RAM kit.",
-    "compatibility_tags": ["DDR4", "RAM", "Memory", "Upgrade", "Desktop", "Laptop"],
-    "affiliate_link": "https://example.com/affiliate/ddr4-ram",
-    "image_url": "https://placehold.co/150x150/FBE9E7/000000?text=DDR4+RAM"
-  },
-  {
-    "id": "prod007",
-    "name": "Placeholder Product 7",
-    "description": "Please update this description with details from the Amazon page.",
-    "compatibility_tags": ["General", "Accessory"],
-    "affiliate_link": "https://amzn.to/4o9xjA9",
-    "image_url": "https://placehold.co/150x150/D1C4E9/000000?text=Product+7"
-  },
-  {
-    "id": "prod008",
-    "name": "Placeholder Product 8",
-    "description": "Please update this description with details from the Amazon page.",
-    "compatibility_tags": ["General", "Accessory"],
-    "affiliate_link": "https://amzn.to/3ITcnwX",
-    "image_url": "https://placehold.co/150x150/D1C4E9/000000?text=Product+8"
-  },
-  {
-    "id": "prod009",
-    "name": "Placeholder Product 9",
-    "description": "Please update this description with details from the Amazon page.",
-    "compatibility_tags": ["General", "Accessory"],
-    "affiliate_link": "https://amzn.to/4oivfG4",
-    "image_url": "https://placehold.co/150x150/D1C4E9/000000?text=Product+9"
-  },
-  {
-    "id": "prod010",
-    "name": "Placeholder Product 10",
-    "description": "Please update this description with details from the Amazon page.",
-    "compatibility_tags": ["General", "Accessory"],
-    "affiliate_link": "https://amzn.to/3ISENav",
-    "image_url": "https://placehold.co/150x150/D1C4E9/000000?text=Product+10"
-  }
 ]
