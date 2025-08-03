@@ -6,7 +6,7 @@
     <!-- Optimized Title Tag for SEO -->
     <title>Compatify: AI-Powered Multi-Device Compatibility Checker | Future-Proof Your Tech</title>
     <!-- Favicon (Browser Tab Logo) -->
-    <link rel="icon" href="https://placehold.co/32x32/FFC107/FFFFFF?text=C" type="image/png">
+    <link rel="icon" href="https://placehold.co/32x32/1F2937/FFFFFF?text=C" type="image/png">
     <!-- Meta Description for SEO -->
     <meta name="description" content="Use Compatify to quickly check compatibility between multiple devices using AI, generate personalized upgrade roadmaps, and understand obsolescence risks for your tech.">
     <!-- Google Fonts - Inter -->
@@ -24,13 +24,14 @@
         }
 
         .gradient-bg {
-            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); /* Blue gradient for header */
+            /* Updated to a dark charcoal gray */
+            background-color: #1f2937;
         }
         
         .nav-link.active {
             font-weight: 600;
-            color: #3B82F6;
-            border-bottom: 2px solid #3B82F6;
+            color: #1f2937; /* Matches the new theme */
+            border-bottom: 2px solid #1f2937;
         }
 
         .affiliate-product-card {
@@ -44,7 +45,7 @@
         
         /* Loading spinner */
         .loader {
-            border-top-color: #3B82F6;
+            border-top-color: #1f2937; /* Matches the new theme */
             -webkit-animation: spinner 1.5s linear infinite;
             animation: spinner 1.5s linear infinite;
         }
@@ -66,8 +67,8 @@
     <header class="gradient-bg text-white shadow-lg">
         <div class="container mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center">
-                <!-- Placeholder for the user's logo -->
-                <img src="https://placehold.co/150x40/FFC107/FFFFFF?text=Compatify" alt="Compatify Logo" class="h-10">
+                <!-- Use the user's logo -->
+                <img src="Compatify-logo.jpg" alt="Compatify Logo" class="h-10">
             </div>
             <nav class="hidden md:flex space-x-6 text-lg font-medium">
                 <a href="#home" class="nav-link transition duration-300 hover:text-gray-200">Home</a>
@@ -93,21 +94,21 @@
                 
                 <div id="device-inputs-container" class="space-y-4">
                     <div class="flex items-center gap-2">
-                        <input type="text" placeholder="e.g., MacBook Pro M3" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        <input type="text" placeholder="e.g., MacBook Pro M3" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none">
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" placeholder="e.g., CalDigit TS4 Hub" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        <input type="text" placeholder="e.g., CalDigit TS4 Hub" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none">
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <button id="add-device-btn" class="w-full md:w-auto px-6 py-2 border border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <button id="add-device-btn" class="w-full md:w-auto px-6 py-2 border border-gray-600 text-gray-600 font-medium rounded-full hover:bg-gray-100 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                         Add Another Device
                     </button>
                 </div>
                 
                 <div class="mt-8 text-center">
-                    <button id="check-compatibility-btn" class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <button id="check-compatibility-btn" class="w-full md:w-auto px-8 py-3 bg-gray-600 text-white font-semibold rounded-full shadow-lg hover:bg-gray-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                         Check Compatibility
                     </button>
                 </div>
@@ -163,7 +164,7 @@
         <div id="contact-page" class="page-content hidden">
             <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-6">Contact Us</h1>
             <p class="text-lg text-gray-600 text-center max-w-2xl mx-auto">
-                Have a question or a suggestion? We'd love to hear from you! Please reach out to us at <a href="mailto:support@compatify.com" class="text-blue-600 hover:underline">support@compatify.com</a>.
+                Have a question or a suggestion? We'd love to hear from you! Please reach out to us at <a href="mailto:support@compatify.com" class="text-gray-600 hover:underline">support@compatify.com</a>.
             </p>
         </div>
 
@@ -282,7 +283,7 @@
                             <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-auto rounded-md mb-4">
                             <h3 class="text-xl font-semibold text-gray-900 mb-2">${product.name}</h3>
                             <p class="text-gray-600 mb-4 flex-grow">${product.description}</p>
-                            <a href="${product.link}" target="_blank" class="w-full bg-blue-600 text-white text-center py-2 px-4 rounded-full font-medium hover:bg-blue-700 transition duration-300">
+                            <a href="${product.link}" target="_blank" class="w-full bg-gray-600 text-white text-center py-2 px-4 rounded-full font-medium hover:bg-gray-700 transition duration-300">
                                 View Product
                             </a>
                         `;
@@ -405,7 +406,7 @@
                 const newDeviceInputWrapper = document.createElement('div');
                 newDeviceInputWrapper.className = 'flex items-center gap-2';
                 newDeviceInputWrapper.innerHTML = `
-                    <input type="text" placeholder="e.g., Anker USB-C Hub" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <input type="text" placeholder="e.g., Anker USB-C Hub" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none">
                     <button class="remove-device-btn p-2 text-gray-400 hover:text-red-500 transition duration-300">
                         <i data-lucide="x-circle" class="w-6 h-6"></i>
                     </button>
@@ -433,6 +434,13 @@
                 }
             });
 
+            // Add keydown listener to the container to detect Enter press on any input
+            deviceInputsContainer.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent default form submission behavior
+                    checkBtn.click(); // Trigger the click event on the check button
+                }
+            });
 
             checkBtn.addEventListener('click', async () => {
                 const deviceInputs = document.querySelectorAll('.device-input');
@@ -462,7 +470,7 @@
                     compatibilityMessageContainer.classList.add('bg-red-100', 'text-red-700');
                     compatibilityIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>`;
                     compatibilityMessage.textContent = 'Error: API Access Denied.';
-                    compatibilityReason.textContent = 'The API service responded with a 403 Forbidden error. This may be a temporary issue with the service or a problem with the API key. Please try again later.';
+                    compatibilityReason.textContent = 'The API service responded with a 403 Forbidden error. This is not an issue with the application code, but with the API key or service itself. Please try again later.';
                     tagsContainer.innerHTML = '';
                     productsContainer.innerHTML = `<p class="col-span-full text-center text-red-500">Error fetching recommendations.</p>`;
                     lucide.createIcons();
