@@ -119,8 +119,7 @@
                         return response;
                     }
                     console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`);
-                    // Use a more generic error to prevent exposing internal details
-                    throw new Error(`API response error.`);
+                    throw new Error(`API response was not ok: Status ${response.status}`);
                 } catch (error) {
                     if (i === retries - 1) {
                         throw error;
