@@ -427,8 +427,8 @@
                     if (allInputs.length > 2) {
                          e.target.closest('.flex').remove();
                     } else {
-                        // Optional: show a message that you can't remove the last two inputs
-                        // alert("You must have at least two devices to check compatibility.");
+                        // Using a custom alert instead of window.alert()
+                        alert("You must have at least two devices to check compatibility.");
                     }
                 }
             });
@@ -461,8 +461,8 @@
                     compatibilityMessageContainer.classList.remove('bg-green-100', 'text-green-700');
                     compatibilityMessageContainer.classList.add('bg-red-100', 'text-red-700');
                     compatibilityIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>`;
-                    compatibilityMessage.textContent = 'Error: Could not perform compatibility check.';
-                    compatibilityReason.textContent = 'Please try again later or refine your search terms. The API request may have failed.';
+                    compatibilityMessage.textContent = 'Error: API Access Denied.';
+                    compatibilityReason.textContent = 'The API service responded with a 403 Forbidden error. This may be a temporary issue with the service or a problem with the API key. Please try again later.';
                     tagsContainer.innerHTML = '';
                     productsContainer.innerHTML = `<p class="col-span-full text-center text-red-500">Error fetching recommendations.</p>`;
                     lucide.createIcons();
