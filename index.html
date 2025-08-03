@@ -6,7 +6,7 @@
     <!-- Optimized Title Tag for SEO -->
     <title>Compatify: AI-Powered Multi-Device Compatibility Checker | Future-Proof Your Tech</title>
     <!-- Favicon (Browser Tab Logo) -->
-    <link rel="icon" href="https://placehold.co/32x32/1F2937/FFFFFF?text=C" type="image/png">
+    <link rel="icon" href="Compatify-logo.PNG" type="image/png">
     <!-- Meta Description for SEO -->
     <meta name="description" content="Use Compatify to quickly check compatibility between multiple devices using AI, generate personalized upgrade roadmaps, and understand obsolescence risks for your tech.">
     <!-- Google Fonts - Inter -->
@@ -68,7 +68,7 @@
         <div class="container mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center">
                 <!-- Use the user's logo -->
-                <img src="Compatify-logo.jpg" alt="Compatify Logo" class="h-10">
+                <img src="Compatify-logo.PNG" alt="Compatify Logo" class="h-10">
             </div>
             <nav class="hidden md:flex space-x-6 text-lg font-medium">
                 <a href="#home" class="nav-link transition duration-300 hover:text-gray-200">Home</a>
@@ -453,6 +453,14 @@
                     return;
                 }
 
+                // --- Button State Change for User Feedback ---
+                const originalText = checkBtn.textContent;
+                const originalClasses = checkBtn.className;
+                checkBtn.textContent = 'Checking...';
+                checkBtn.disabled = true;
+                checkBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                checkBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+
                 // Reset UI and show loading state
                 resultSection.classList.add('hidden');
                 loadingSpinner.classList.remove('hidden');
@@ -474,6 +482,12 @@
                     tagsContainer.innerHTML = '';
                     productsContainer.innerHTML = `<p class="col-span-full text-center text-red-500">Error fetching recommendations.</p>`;
                     lucide.createIcons();
+                } finally {
+                    // --- Revert Button to Original State ---
+                    checkBtn.textContent = originalText;
+                    checkBtn.disabled = false;
+                    checkBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    checkBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
                 }
             });
 
@@ -518,3 +532,4 @@
     </script>
 </body>
 </html>
+
