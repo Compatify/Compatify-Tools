@@ -1,53 +1,49 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import fetch from 'node-fetch';
 
-export default async function handler(req, res) {
-  // Set CORS headers for preflight OPTIONS request
-  // This allows the browser to make the subsequent POST request
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+export default async function handler(request, response) {
+  // Use VITE_API_KEY from environment variables instead of GEMINI_API_KEY
+  const apiKey = process.env.VITE_API_KEY;
 
-  // Handle preflight OPTIONS request
-  if (req.method === "OPTIONS") {
-    // Respond with a 200 OK for the preflight request
-    res.status(200).end();
-    return;
-  }
-
-  // Handle the main POST request
-  if (req.method !== "POST") {
-    // If the method is not POST, return a 405 Method Not Allowed error
-    res.status(405).json({ error: "Method Not Allowed" });
-    return;
-  }
-
-  // Ensure the API key is set in the environment variables
-  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    res.status(500).json({ error: "API key not configured." });
+    console.error('VITE_API_KEY environment variable is not set.');
+    response.status(500).json({ error: 'API key not configured' });
+    return;
+  }
+
+  // Allow only POST requests
+  if (request.method !== 'POST') {
+    response.status(405).json({ error: 'Method Not Allowed' });
+    return;
+  }
+
+  // Ensure the request body is valid
+  if (!request.body) {
+    response.status(400).json({ error: 'Request body is missing' });
     return;
   }
 
   try {
-    const { prompt } = req.body;
+    const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
-    if (!prompt) {
-      res.status(400).json({ error: "Prompt is required in the request body." });
+    const apiResponse = await fetch(geminiApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request.body),
+    });
+
+    const data = await apiResponse.json();
+
+    if (!apiResponse.ok) {
+      console.error('Error from Gemini API:', data);
+      response.status(apiResponse.status).json(data);
       return;
     }
 
-    // Initialize the Google Generative AI client with the API key
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
-
-    // Generate content using the prompt
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    res.status(200).json({ text });
+    response.status(200).json(data);
   } catch (error) {
-    console.error("API Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error in proxy handler:', error);
+    response.status(500).json({ error: 'Internal Server Error' });
   }
 }
