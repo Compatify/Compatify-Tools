@@ -207,9 +207,8 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- Gemini API Configuration and Global Variables ---
-            // The API key for Vercel should be a build-time environment variable.
-            // Replace 'YOUR_VERCEL_ENV_VAR' with the name you used (e.g., 'GEMINI_API_KEY').
-            const apiKey = typeof process !== 'undefined' && process.env.YOUR_VERCEL_ENV_VAR ? process.env.YOUR_VERCEL_ENV_VAR : "";
+            // The API key is now correctly configured to use the 'VITE_API_KEY' environment variable from Vercel.
+            const apiKey = typeof process !== 'undefined' && process.env.VITE_API_KEY ? process.env.VITE_API_KEY : "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             
             // Store the list of affiliate products loaded from a mock JSON file.
@@ -498,8 +497,9 @@
                     return;
                 }
                 
+                // The API key check now looks for the correct variable name 'VITE_API_KEY'
                 if (!apiKey) {
-                    showMessageBox("API key is not configured. Please set a 'GEMINI_API_KEY' environment variable and redeploy.");
+                    showMessageBox("API key is not configured. Please set a 'VITE_API_KEY' environment variable and redeploy.");
                     return;
                 }
 
