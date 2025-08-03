@@ -59,6 +59,21 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Custom message box styling */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            max-width: 90%;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -167,6 +182,16 @@
                 Have a question or a suggestion? We'd love to hear from you! Please reach out to us at <a href="mailto:support@compatify.com" class="text-gray-600 hover:underline">support@compatify.com</a>.
             </p>
         </div>
+        
+        <!-- Custom Message Box -->
+        <div id="message-box" class="message-box hidden">
+            <p id="message-content" class="text-lg text-gray-800 mb-4"></p>
+            <button id="close-message-btn" class="bg-gray-600 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-700 transition">
+                OK
+            </button>
+        </div>
+        
+        <div id="overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden"></div>
 
     </main>
 
@@ -182,10 +207,11 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- Gemini API Configuration and Global Variables ---
-            // The API key is provided at runtime. The following line is the correct format for this environment.
-            const apiKey = "";
+            // The API key for Vercel should be a build-time environment variable.
+            // Replace 'YOUR_VERCEL_ENV_VAR' with the name you used (e.g., 'GEMINI_API_KEY').
+            const apiKey = typeof process !== 'undefined' && process.env.YOUR_VERCEL_ENV_VAR ? process.env.YOUR_VERCEL_ENV_VAR : "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
+            
             // Store the list of affiliate products loaded from a mock JSON file.
             let affiliateProducts = [];
 
@@ -201,8 +227,28 @@
             const compatibilityReason = document.getElementById('compatibility-reason');
             const tagsContainer = document.getElementById('compatibility-tags-container');
             const productsContainer = document.getElementById('affiliate-products-container');
+            const messageBox = document.getElementById('message-box');
+            const messageContent = document.getElementById('message-content');
+            const closeMessageBtn = document.getElementById('close-message-btn');
+            const overlay = document.getElementById('overlay');
 
             // --- Core Functions ---
+
+            /**
+             * Displays a custom message box instead of using a browser alert.
+             * @param {string} message - The message to display.
+             */
+            const showMessageBox = (message) => {
+                messageContent.textContent = message;
+                messageBox.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+            };
+
+            closeMessageBtn.addEventListener('click', () => {
+                messageBox.classList.add('hidden');
+                overlay.classList.add('hidden');
+            });
+
 
             /**
              * Handles fetching the list of affiliate products.
@@ -428,8 +474,7 @@
                     if (allInputs.length > 2) {
                          e.target.closest('.flex').remove();
                     } else {
-                        // Using a custom alert instead of window.alert()
-                        alert("You must have at least two devices to check compatibility.");
+                        showMessageBox("You must have at least two devices to check compatibility.");
                     }
                 }
             });
@@ -449,7 +494,12 @@
                                          .filter(value => value !== '');
 
                 if (deviceNames.length < 2) {
-                    alert("Please enter at least two device names to check compatibility.");
+                    showMessageBox("Please enter at least two device names to check compatibility.");
+                    return;
+                }
+                
+                if (!apiKey) {
+                    showMessageBox("API key is not configured. Please set a 'GEMINI_API_KEY' environment variable and redeploy.");
                     return;
                 }
 
