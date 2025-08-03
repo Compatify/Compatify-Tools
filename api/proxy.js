@@ -1,4 +1,3 @@
-// api/proxy.js
 // This Vercel serverless function acts as a proxy for the Gemini API.
 
 // The `VITE_API_KEY` is a secret environment variable configured in Vercel.
@@ -9,7 +8,18 @@ const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-
 
 // This is the main handler for the Vercel serverless function.
 module.exports = async (req, res) => {
-    // Check if the request method is POST. This is crucial for fixing the 405 error.
+    // Set CORS headers to allow requests from your frontend.
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle the preflight OPTIONS request.
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    // Check if the request method is POST.
     if (req.method !== 'POST') {
         // If the method is not POST, send a 405 Method Not Allowed response.
         res.status(405).json({ error: 'Method Not Allowed' });
