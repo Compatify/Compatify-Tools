@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Optimized Title Tag for SEO -->
-    <title>Compatify: AI-Powered Device Compatibility Checker & Upgrade Roadmaps | Future-Proof Your Tech</title>
+    <title>Compatify: AI-Powered Multi-Device Compatibility Checker | Future-Proof Your Tech</title>
     <!-- Favicon (Browser Tab Logo) -->
     <link rel="icon" href="https://placehold.co/32x32/FFC107/FFFFFF?text=C" type="image/png">
     <!-- Meta Description for SEO -->
-    <meta name="description" content="Use Compatify to quickly check compatibility between any two devices using AI, generate personalized upgrade roadmaps, and understand obsolescence risks for your tech.">
+    <meta name="description" content="Use Compatify to quickly check compatibility between multiple devices using AI, generate personalized upgrade roadmaps, and understand obsolescence risks for your tech.">
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- NOTE: The Tailwind CSS CDN is not recommended for production. For a production environment, you should install Tailwind as a PostCSS plugin. -->
     <!-- Lucide Icons CDN for visual flair -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -65,7 +66,8 @@
     <header class="gradient-bg text-white shadow-lg">
         <div class="container mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center">
-                <span class="text-3xl font-bold tracking-tight">Compatify</span>
+                <!-- Placeholder for the user's logo -->
+                <img src="https://placehold.co/150x40/FFC107/FFFFFF?text=Compatify" alt="Compatify Logo" class="h-10">
             </div>
             <nav class="hidden md:flex space-x-6 text-lg font-medium">
                 <a href="#home" class="nav-link transition duration-300 hover:text-gray-200">Home</a>
@@ -79,25 +81,31 @@
     <main class="flex-grow container mx-auto px-6 py-10">
         <div id="home-page" class="page-content">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 text-center mb-4">
-                AI-Powered Device Compatibility Checker
+                AI-Powered Multi-Device Compatibility Checker
             </h1>
             <p class="text-lg text-gray-600 text-center max-w-2xl mx-auto mb-12">
-                Use AI to instantly check compatibility, get a detailed analysis, and find recommended products.
+                Use AI to instantly check compatibility between multiple devices, get a detailed analysis, and find recommended products.
             </p>
 
             <!-- Compatibility Checker Card -->
             <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-4xl mx-auto">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Check Compatibility</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="device-a-input" class="block text-sm font-medium text-gray-700 mb-2">Device 1</label>
-                        <input type="text" id="device-a-input" placeholder="e.g., MacBook Pro M3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                
+                <div id="device-inputs-container" class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="e.g., MacBook Pro M3" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
-                    <div>
-                        <label for="device-b-input" class="block text-sm font-medium text-gray-700 mb-2">Device 2</label>
-                        <input type="text" id="device-b-input" placeholder="e.g., CalDigit TS4 Hub" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="e.g., CalDigit TS4 Hub" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
                 </div>
+
+                <div class="mt-4">
+                    <button id="add-device-btn" class="w-full md:w-auto px-6 py-2 border border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Add Another Device
+                    </button>
+                </div>
+                
                 <div class="mt-8 text-center">
                     <button id="check-compatibility-btn" class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                         Check Compatibility
@@ -173,7 +181,7 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- Gemini API Configuration and Global Variables ---
-            // The API key will be provided at runtime by the Canvas environment.
+            // The API key is provided at runtime. The following line is the correct format for this environment.
             const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
@@ -181,8 +189,8 @@
             let affiliateProducts = [];
 
             // --- DOM Element References ---
-            const deviceAInput = document.getElementById('device-a-input');
-            const deviceBInput = document.getElementById('device-b-input');
+            const deviceInputsContainer = document.getElementById('device-inputs-container');
+            const addDeviceBtn = document.getElementById('add-device-btn');
             const checkBtn = document.getElementById('check-compatibility-btn');
             const resultSection = document.getElementById('compatibility-result-section');
             const loadingSpinner = document.getElementById('loading-spinner');
@@ -192,7 +200,6 @@
             const compatibilityReason = document.getElementById('compatibility-reason');
             const tagsContainer = document.getElementById('compatibility-tags-container');
             const productsContainer = document.getElementById('affiliate-products-container');
-
 
             // --- Core Functions ---
 
@@ -252,7 +259,7 @@
                 if (requiredTags.length === 0) {
                     const noProductsMessage = document.createElement('p');
                     noProductsMessage.className = 'col-span-full text-center text-gray-500 italic';
-                    noProductsMessage.textContent = 'Enter two devices above to see product recommendations.';
+                    noProductsMessage.textContent = 'Enter two or more devices above to see product recommendations.';
                     productsContainer.appendChild(noProductsMessage);
                     return;
                 }
@@ -283,19 +290,18 @@
                     });
                 }
             };
-            
+
             /**
              * Generates a compatibility analysis and tags using the Gemini API.
-             * @param {string} deviceA - The name of the first device.
-             * @param {string} deviceB - The name of the second device.
+             * @param {string[]} deviceNames - An array of device names to analyze.
              * @returns {Promise<Object>} A promise that resolves to the API's JSON response.
              */
-            const getCompatibilityAnalysis = async (deviceA, deviceB) => {
-                const prompt = `You are a device compatibility expert. Given two devices, analyze their compatibility and provide a structured JSON response. The response must include a boolean 'isCompatible', a string 'reason' explaining why, and an array of strings 'compatibilityTags' with relevant technical specifications. Analyze the compatibility between "${deviceA}" and "${deviceB}".`;
-
+            const getCompatibilityAnalysis = async (deviceNames) => {
+                const deviceList = deviceNames.map(name => `"${name}"`).join(', ');
+                const prompt = `You are a device compatibility expert. Given a list of devices, analyze their collective compatibility and provide a structured JSON response. The response must include a boolean 'isCompatible' for the group, a string 'reason' explaining why, and an array of strings 'compatibilityTags' with common technical specifications or potential issues. Analyze the compatibility of the following devices: ${deviceList}.`;
+                
                 const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                 
-                // Define the expected JSON response structure using a schema.
                 const payload = {
                     contents: chatHistory,
                     generationConfig: {
@@ -313,8 +319,7 @@
                         }
                     }
                 };
-
-                // The fetch call with retry logic using exponential backoff
+                
                 let retries = 0;
                 const maxRetries = 3;
                 while (retries < maxRetries) {
@@ -326,6 +331,7 @@
                         });
 
                         if (!response.ok) {
+                            console.error(`API Error: Status ${response.status}, message: ${response.statusText}`);
                             throw new Error(`API response error: ${response.statusText}`);
                         }
 
@@ -342,7 +348,7 @@
                     } catch (error) {
                         retries++;
                         if (retries < maxRetries) {
-                            const delay = Math.pow(2, retries) * 1000; // Exponential backoff
+                            const delay = Math.pow(2, retries) * 1000;
                             console.error(`Attempt ${retries} failed. Retrying in ${delay}ms...`, error);
                             await new Promise(res => setTimeout(res, delay));
                         } else {
@@ -360,10 +366,8 @@
                 resultSection.classList.remove('hidden');
                 loadingSpinner.classList.add('hidden');
                 
-                // Clear previous tags
                 tagsContainer.innerHTML = '';
                 
-                // Update compatibility message and icon
                 if (data.isCompatible) {
                     compatibilityMessageContainer.classList.remove('bg-red-100', 'text-red-700');
                     compatibilityMessageContainer.classList.add('bg-green-100', 'text-green-700');
@@ -376,10 +380,8 @@
                     compatibilityMessage.textContent = 'Devices are not compatible.';
                 }
 
-                // Update the detailed reason
                 compatibilityReason.textContent = data.reason;
                 
-                // Render the tags
                 if (data.compatibilityTags && data.compatibilityTags.length > 0) {
                     data.compatibilityTags.forEach(tag => {
                         const tagElement = document.createElement('span');
@@ -391,44 +393,76 @@
                     tagsContainer.innerHTML = `<p class="text-gray-500 italic">No specific tags found.</p>`;
                 }
                 
-                // Render affiliate products based on the new tags
                 renderAffiliateProducts(data.compatibilityTags);
                 
-                // Re-initialize lucide icons
+                lucide.createIcons();
+            };
+
+            /**
+             * Creates a new device input field with a remove button.
+             */
+            const addDeviceInput = () => {
+                const newDeviceInputWrapper = document.createElement('div');
+                newDeviceInputWrapper.className = 'flex items-center gap-2';
+                newDeviceInputWrapper.innerHTML = `
+                    <input type="text" placeholder="e.g., Anker USB-C Hub" class="device-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <button class="remove-device-btn p-2 text-gray-400 hover:text-red-500 transition duration-300">
+                        <i data-lucide="x-circle" class="w-6 h-6"></i>
+                    </button>
+                `;
+                deviceInputsContainer.appendChild(newDeviceInputWrapper);
                 lucide.createIcons();
             };
 
             // --- Event Listeners and Initial Setup ---
 
-            checkBtn.addEventListener('click', async () => {
-                const deviceA = deviceAInput.value.trim();
-                const deviceB = deviceBInput.value.trim();
+            addDeviceBtn.addEventListener('click', () => {
+                addDeviceInput();
+            });
 
-                if (!deviceA || !deviceB) {
-                    // Simple message box for validation
-                    alert("Please enter both device names.");
+            deviceInputsContainer.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-device-btn')) {
+                    // Check to make sure there are at least two inputs before removing
+                    const allInputs = document.querySelectorAll('.device-input');
+                    if (allInputs.length > 2) {
+                         e.target.closest('.flex').remove();
+                    } else {
+                        // Optional: show a message that you can't remove the last two inputs
+                        // alert("You must have at least two devices to check compatibility.");
+                    }
+                }
+            });
+
+
+            checkBtn.addEventListener('click', async () => {
+                const deviceInputs = document.querySelectorAll('.device-input');
+                const deviceNames = Array.from(deviceInputs)
+                                         .map(input => input.value.trim())
+                                         .filter(value => value !== '');
+
+                if (deviceNames.length < 2) {
+                    alert("Please enter at least two device names to check compatibility.");
                     return;
                 }
 
                 // Reset UI and show loading state
                 resultSection.classList.add('hidden');
                 loadingSpinner.classList.remove('hidden');
-                renderAffiliateProducts([]); // Clear old products
+                renderAffiliateProducts([]);
                 productsContainer.innerHTML = `<p class="col-span-full text-center text-gray-500 italic">Checking for recommendations...</p>`;
 
                 try {
-                    const compatibilityData = await getCompatibilityAnalysis(deviceA, deviceB);
+                    const compatibilityData = await getCompatibilityAnalysis(deviceNames);
                     displayResults(compatibilityData);
                 } catch (error) {
                     console.error("Failed to get compatibility data:", error);
                     loadingSpinner.classList.add('hidden');
-                    // Display an error message to the user
                     resultSection.classList.remove('hidden');
                     compatibilityMessageContainer.classList.remove('bg-green-100', 'text-green-700');
                     compatibilityMessageContainer.classList.add('bg-red-100', 'text-red-700');
                     compatibilityIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>`;
                     compatibilityMessage.textContent = 'Error: Could not perform compatibility check.';
-                    compatibilityReason.textContent = 'Please try again later or refine your search terms.';
+                    compatibilityReason.textContent = 'Please try again later or refine your search terms. The API request may have failed.';
                     tagsContainer.innerHTML = '';
                     productsContainer.innerHTML = `<p class="col-span-full text-center text-red-500">Error fetching recommendations.</p>`;
                     lucide.createIcons();
