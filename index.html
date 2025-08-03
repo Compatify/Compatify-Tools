@@ -3,256 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compatify-Tools</title>
-    <!-- Use Inter font from Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS from CDN -->
+    <title>Compatify Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f9fc;
+            background-color: #f3f4f6;
         }
-        .container {
-            max-width: 900px;
+        .bg-custom-gradient {
+            background-image: linear-gradient(to right, #00c6ff, #0072ff);
         }
-        .loading-animation {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid #fff;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        #results {
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Custom progress circle animation */
-        .progress-circle {
-            transition: stroke-dashoffset 1s ease-in-out;
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen px-4 py-8">
-    <div class="container bg-white p-8 md:p-12 rounded-3xl shadow-2xl space-y-8">
-
-        <!-- Header -->
-        <header class="text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Compatify-Tools</h1>
-            <p class="text-lg text-gray-600">Analyze the compatibility between two different products with AI.</p>
-        </header>
-
-        <!-- Main Form and Results -->
-        <div class="grid md:grid-cols-2 gap-8">
-            <!-- Product 1 Input -->
-            <div class="space-y-4 p-6 bg-gray-50 rounded-2xl shadow-inner">
-                <label for="product1-name" class="block text-xl font-semibold text-gray-700">Product 1</label>
-                <input type="text" id="product1-name" placeholder="Name" class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                <textarea id="product1-features" rows="6" placeholder="Key features, specifications, etc." class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"></textarea>
-            </div>
-
-            <!-- Product 2 Input -->
-            <div class="space-y-4 p-6 bg-gray-50 rounded-2xl shadow-inner">
-                <label for="product2-name" class="block text-xl font-semibold text-gray-700">Product 2</label>
-                <input type="text" id="product2-name" placeholder="Name" class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                <textarea id="product2-features" rows="6" placeholder="Key features, specifications, etc." class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"></textarea>
-            </div>
+<body class="text-gray-800">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">Compatify Tools</h1>
         </div>
+    </header>
 
-        <!-- Action Button -->
-        <div class="text-center">
-            <button id="check-compatibility-btn" class="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:transform-none">
-                <span id="button-text">Check Compatibility</span>
-                <div id="loading-spinner" class="hidden loading-animation"></div>
-            </button>
-        </div>
-
-        <!-- Message Box -->
-        <div id="message-box" class="hidden mt-6 p-4 rounded-xl border border-red-300 bg-red-50 text-red-700 text-sm font-medium text-center">
-            <p><strong>Error:</strong> <span id="error-message"></span></p>
-        </div>
-
-        <!-- Results Section -->
-        <div id="results" class="hidden">
-            <div class="bg-gray-100 p-6 rounded-2xl shadow-inner border border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800 text-center mb-6">Compatibility Analysis</h3>
-                <div class="flex flex-col md:flex-row items-center md:space-x-8 space-y-6 md:space-y-0">
-                    <!-- Score Circle -->
-                    <div class="relative w-40 h-40 flex-shrink-0">
-                        <svg class="w-full h-full" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" stroke-width="6" />
-                            <circle id="score-circle" class="progress-circle" cx="50" cy="50" r="45" fill="none" stroke="hsl(220, 80%, 55%)" stroke-width="6" stroke-linecap="round" transform="rotate(-90 50 50)" style="stroke-dasharray: 282.7; stroke-dashoffset: 282.7;"/>
-                        </svg>
-                        <span id="score-value" class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-gray-800">0%</span>
-                    </div>
-                    <!-- Analysis -->
-                    <div class="flex-grow">
-                        <div id="analysis-content" class="prose max-w-none text-gray-700 leading-relaxed bg-white p-4 rounded-xl shadow-md border border-gray-200">
-                            <!-- Analysis will be injected here -->
-                        </div>
-                    </div>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto">
+            <h2 class="text-xl font-semibold mb-6 text-gray-700">Enter Component Information</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="component1" class="block text-sm font-medium text-gray-600">Component 1:</label>
+                    <textarea id="component1" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"></textarea>
+                </div>
+                <div>
+                    <label for="component2" class="block text-sm font-medium text-gray-600">Component 2:</label>
+                    <textarea id="component2" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"></textarea>
                 </div>
             </div>
+            <div class="mt-6 flex justify-end">
+                <button id="analyzeBtn" class="bg-custom-gradient text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                    Analyze Compatibility
+                </button>
+            </div>
         </div>
-    </div>
+
+        <div id="loading" class="hidden mt-8 max-w-3xl mx-auto text-center">
+            <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+            <p class="mt-4 text-gray-600">Analyzing compatibility, please wait...</p>
+        </div>
+
+        <div id="resultsContainer" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Compatibility Analysis Results</h2>
+            <div id="results" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-700"></div>
+        </div>
+
+        <!-- Modal for error messages -->
+        <div id="modal" class="flex items-center justify-center">
+            <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full mx-4 text-center">
+                <h3 class="text-lg font-bold text-red-600 mb-2">Error</h3>
+                <p id="modal-message" class="text-gray-700"></p>
+                <button id="close-modal-btn" class="mt-4 bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200">Close</button>
+            </div>
+        </div>
+    </main>
 
     <script>
-        const checkBtn = document.getElementById('check-compatibility-btn');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const buttonText = document.getElementById('button-text');
-        const resultsDiv = document.getElementById('results');
-        const messageBox = document.getElementById('message-box');
-        const errorMessageSpan = document.getElementById('error-message');
-        const analysisContentDiv = document.getElementById('analysis-content');
-        const scoreValueSpan = document.getElementById('score-value');
-        const scoreCircle = document.getElementById('score-circle');
+        document.addEventListener('DOMContentLoaded', () => {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const component1El = document.getElementById('component1');
+            const component2El = document.getElementById('component2');
+            const loadingEl = document.getElementById('loading');
+            const resultsContainerEl = document.getElementById('resultsContainer');
+            const resultsEl = document.getElementById('results');
+            const modalEl = document.getElementById('modal');
+            const modalMessageEl = document.getElementById('modal-message');
+            const closeModalBtn = document.getElementById('close-modal-btn');
 
-        // Function for exponential backoff retry logic
-        async function exponentialBackoffFetch(url, options, retries = 3, delay = 2000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) {
-                        return response;
+            const showModal = (message) => {
+                modalMessageEl.textContent = message;
+                modalEl.style.display = 'flex';
+            };
+
+            const hideModal = () => {
+                modalEl.style.display = 'none';
+            };
+
+            closeModalBtn.addEventListener('click', hideModal);
+
+            const exponentialBackoffFetch = async (url, options, retries = 3, delay = 2000) => {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const response = await fetch(url, options);
+                        if (response.ok) {
+                            return response;
+                        } else {
+                            // If the response is not ok, log and retry
+                            console.error(`Attempt ${i + 1} failed. Status: ${response.status}. Retrying in ${delay}ms...`);
+                            if (i < retries - 1) {
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                delay *= 2; // Exponential backoff
+                            } else {
+                                throw new Error(`API response was not ok: Status ${response.status}`);
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`, error);
+                        if (i < retries - 1) {
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 2;
+                        } else {
+                            throw new Error(`API response error: ${error.message}`);
+                        }
                     }
-                    console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`);
-                    throw new Error(`API response was not ok: Status ${response.status}`);
-                } catch (error) {
-                    if (i === retries - 1) {
-                        throw error;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2; // Exponentially increase delay
                 }
-            }
-        }
+            };
 
-        // Function to call the Gemini API via the Vercel proxy
-        async function getCompatibilityAnalysis(product1, product2) {
-            const prompt = `
-            You are an expert AI assistant that provides compatibility analysis between two products.
-            Provide a compatibility score on a scale of 0 to 100, and a detailed analysis of why they are compatible or incompatible.
-            The response MUST be a JSON object with two fields: "score" (a number) and "analysis" (a string).
-            
-            Product 1:
-            Name: ${product1.name}
-            Features: ${product1.features}
+            const getCompatibilityAnalysis = async (component1, component2) => {
+                const proxyUrl = '/api/proxy'; // Use the Vercel proxy endpoint
 
-            Product 2:
-            Name: ${product2.name}
-            Features: ${product2.features}
+                const prompt = `Analyze the compatibility between Component 1 and Component 2. Provide a detailed, easy-to-understand analysis.
+                Component 1: ${component1}
+                Component 2: ${component2}
+                `;
 
-            Example of output:
-            {
-              "score": 85,
-              "analysis": "The Samsung Galaxy S23 Ultra and the Apple AirPods Pro 2nd Gen are highly compatible. The S23 Ultra's Bluetooth 5.3 and the AirPods' Bluetooth 5.3 ensure a stable and fast connection. While the AirPods are optimized for Apple devices, they will function perfectly well as high-quality Bluetooth headphones with the S23 Ultra, supporting basic features like audio playback, calls, and active noise cancellation. Features like Spatial Audio with dynamic head tracking will not be available on Android devices."
-            }
-            `;
-            
-            const payload = {
-                contents: [{
-                    parts: [{
-                        text: prompt
+                const payload = {
+                    "contents": [{
+                        "parts": [{ "text": prompt }]
                     }]
-                }]
+                };
+
+                try {
+                    const response = await exponentialBackoffFetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API response was not ok: Status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 && 
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Invalid API response structure.');
+                    }
+                } catch (error) {
+                    console.error('API Error:', error);
+                    throw new Error(`API response error: ${error.message}`);
+                }
             };
 
-            const options = {
-                // IMPORTANT: Use the POST method
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
-            };
+            analyzeBtn.addEventListener('click', async () => {
+                const component1 = component1El.value.trim();
+                const component2 = component2El.value.trim();
 
-            try {
-                const response = await exponentialBackoffFetch('/api/proxy', options);
-                const data = await response.json();
-                
-                // Handle API-specific errors from the proxy
-                if (data.error) {
-                    throw new Error(`API Error: ${data.error}`);
+                if (!component1 || !component2) {
+                    showModal('Please provide information for both components.');
+                    return;
                 }
 
-                if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts) {
-                    const resultText = data.candidates[0].content.parts[0].text;
-                    const resultJson = JSON.parse(resultText.trim());
-                    return resultJson;
-                } else {
-                    throw new Error('Unexpected API response format');
+                loadingEl.classList.remove('hidden');
+                resultsContainerEl.classList.add('hidden');
+                resultsEl.textContent = '';
+                analyzeBtn.disabled = true;
+
+                try {
+                    const analysis = await getCompatibilityAnalysis(component1, component2);
+                    resultsEl.textContent = analysis;
+                    resultsContainerEl.classList.remove('hidden');
+                } catch (error) {
+                    showModal(`Failed to get compatibility data: ${error.message}`);
+                } finally {
+                    loadingEl.classList.add('hidden');
+                    analyzeBtn.disabled = false;
                 }
-            } catch (error) {
-                console.error('API Error:', error);
-                throw new Error(`API response error: ${error.message}`);
-            }
-        }
-
-        checkBtn.addEventListener('click', async () => {
-            // Get user input
-            const product1 = {
-                name: document.getElementById('product1-name').value,
-                features: document.getElementById('product1-features').value
-            };
-            const product2 = {
-                name: document.getElementById('product2-name').value,
-                features: document.getElementById('product2-features').value
-            };
-
-            // Basic validation
-            if (!product1.name || !product1.features || !product2.name || !product2.features) {
-                displayMessage('Please fill in all product details.', 'warning');
-                return;
-            }
-
-            // Show loading state
-            checkBtn.disabled = true;
-            buttonText.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
-            messageBox.classList.add('hidden');
-            resultsDiv.classList.add('hidden');
-            
-            // Clear previous results
-            analysisContentDiv.textContent = '';
-            scoreValueSpan.textContent = '0%';
-            scoreCircle.style.strokeDashoffset = '282.7';
-
-            try {
-                const result = await getCompatibilityAnalysis(product1, product2);
-                
-                // Update UI with results
-                resultsDiv.classList.remove('hidden');
-                analysisContentDiv.textContent = result.analysis;
-                
-                // Animate the score
-                const score = result.score;
-                scoreValueSpan.textContent = `${score}%`;
-                const offset = 282.7 - (282.7 * score / 100);
-                scoreCircle.style.strokeDashoffset = offset;
-
-            } catch (error) {
-                console.error('Failed to get compatibility data:', error);
-                displayMessage(error.message, 'error');
-            } finally {
-                // Hide loading state
-                checkBtn.disabled = false;
-                buttonText.classList.remove('hidden');
-                loadingSpinner.classList.add('hidden');
-            }
+            });
         });
-
-        function displayMessage(message, type) {
-            messageBox.classList.remove('hidden', 'border-red-300', 'bg-red-50', 'text-red-700', 'border-yellow-300', 'bg-yellow-50', 'text-yellow-700');
-            errorMessageSpan.textContent = message;
-            if (type === 'error') {
-                messageBox.classList.add('border-red-300', 'bg-red-50', 'text-red-700');
-            } else if (type === 'warning') {
-                messageBox.classList.add('border-yellow-300', 'bg-yellow-50', 'text-yellow-700');
-            }
-        }
     </script>
 </body>
 </html>
