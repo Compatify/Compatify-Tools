@@ -3,202 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compatify Tools</title>
+    <title>Compatify</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f7fafc;
         }
-        .bg-custom-gradient {
-            background-image: linear-gradient(to right, #00c6ff, #0072ff);
+        .container {
+            max-width: 800px;
         }
-        #results {
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        .loading-animation {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
         }
-        #modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="text-gray-800">
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-900">Compatify Tools</h1>
-        </div>
-    </header>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="container mx-auto p-8 bg-white rounded-lg shadow-xl">
+        <h1 class="text-4xl font-bold text-center text-blue-600 mb-6">Compatify</h1>
+        <p class="text-center text-gray-600 mb-8">
+            Let's find out how compatible two things are.
+        </p>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto">
-            <h2 class="text-xl font-semibold mb-6 text-gray-700">Enter Component Information</h2>
-            <div class="space-y-4">
-                <div>
-                    <label for="component1" class="block text-sm font-medium text-gray-600">Component 1:</label>
-                    <textarea id="component1" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"></textarea>
-                </div>
-                <div>
-                    <label for="component2" class="block text-sm font-medium text-gray-600">Component 2:</label>
-                    <textarea id="component2" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-50 border"></textarea>
-                </div>
+        <!-- Input and Submit section -->
+        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-6">
+            <input type="text" id="itemA" placeholder="Enter the first item..."
+                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" id="itemB" placeholder="Enter the second item..."
+                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="flex justify-center">
+            <button id="analyzeBtn"
+                    class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Analyze Compatibility
+            </button>
+        </div>
+
+        <!-- Analysis Results section -->
+        <div id="results" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Compatibility Analysis</h2>
+            <div id="analysisContent">
+                <!-- Analysis content will be injected here -->
             </div>
-            <div class="mt-6 flex justify-end">
-                <button id="analyzeBtn" class="bg-custom-gradient text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
-                    Analyze Compatibility
-                </button>
-            </div>
-        </div>
-
-        <div id="loading" class="hidden mt-8 max-w-3xl mx-auto text-center">
-            <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-            <p class="mt-4 text-gray-600">Analyzing compatibility, please wait...</p>
-        </div>
-
-        <div id="resultsContainer" class="hidden mt-8 bg-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Compatibility Analysis Results</h2>
-            <div id="results" class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-700"></div>
-        </div>
-
-        <!-- Modal for error messages -->
-        <div id="modal" class="flex items-center justify-center">
-            <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full mx-4 text-center">
-                <h3 class="text-lg font-bold text-red-600 mb-2">Error</h3>
-                <p id="modal-message" class="text-gray-700"></p>
-                <button id="close-modal-btn" class="mt-4 bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200">Close</button>
+            <div id="loading" class="flex justify-center items-center mt-4 hidden">
+                <div class="loading-animation"></div>
+                <span class="ml-3 text-gray-500">Analyzing...</span>
             </div>
         </div>
-    </main>
 
+        <!-- Error Message Box -->
+        <div id="errorBox" class="mt-8 p-4 bg-red-100 text-red-700 border border-red-400 rounded-lg hidden">
+            <strong class="font-bold">Error:</strong>
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <!-- The core logic for the application -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const analyzeBtn = document.getElementById('analyzeBtn');
-            const component1El = document.getElementById('component1');
-            const component2El = document.getElementById('component2');
-            const loadingEl = document.getElementById('loading');
-            const resultsContainerEl = document.getElementById('resultsContainer');
-            const resultsEl = document.getElementById('results');
-            const modalEl = document.getElementById('modal');
-            const modalMessageEl = document.getElementById('modal-message');
-            const closeModalBtn = document.getElementById('close-modal-btn');
+        // Get references to DOM elements
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const itemAInput = document.getElementById('itemA');
+        const itemBInput = document.getElementById('itemB');
+        const resultsDiv = document.getElementById('results');
+        const analysisContentDiv = document.getElementById('analysisContent');
+        const loadingDiv = document.getElementById('loading');
+        const errorBoxDiv = document.getElementById('errorBox');
+        const errorMessageSpan = document.getElementById('errorMessage');
 
-            const showModal = (message) => {
-                modalMessageEl.textContent = message;
-                modalEl.style.display = 'flex';
-            };
-
-            const hideModal = () => {
-                modalEl.style.display = 'none';
-            };
-
-            closeModalBtn.addEventListener('click', hideModal);
-
-            const exponentialBackoffFetch = async (url, options, retries = 3, delay = 2000) => {
-                for (let i = 0; i < retries; i++) {
-                    try {
-                        const response = await fetch(url, options);
-                        if (response.ok) {
-                            return response;
-                        } else {
-                            // If the response is not ok, log and retry
-                            console.error(`Attempt ${i + 1} failed. Status: ${response.status}. Retrying in ${delay}ms...`);
-                            if (i < retries - 1) {
-                                await new Promise(resolve => setTimeout(resolve, delay));
-                                delay *= 2; // Exponential backoff
-                            } else {
-                                throw new Error(`API response was not ok: Status ${response.status}`);
-                            }
-                        }
-                    } catch (error) {
-                        console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`, error);
-                        if (i < retries - 1) {
-                            await new Promise(resolve => setTimeout(resolve, delay));
-                            delay *= 2;
-                        } else {
-                            throw new Error(`API response error: ${error.message}`);
-                        }
-                    }
-                }
-            };
-
-            const getCompatibilityAnalysis = async (component1, component2) => {
-                const proxyUrl = '/api/proxy'; // Use the Vercel proxy endpoint
-
-                const prompt = `Analyze the compatibility between Component 1 and Component 2. Provide a detailed, easy-to-understand analysis.
-                Component 1: ${component1}
-                Component 2: ${component2}
-                `;
-
-                const payload = {
-                    "contents": [{
-                        "parts": [{ "text": prompt }]
-                    }]
-                };
-
+        // Function to make API calls with exponential backoff for handling rate limits
+        async function exponentialBackoffFetch(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
                 try {
-                    const response = await exponentialBackoffFetch(proxyUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(payload),
-                    });
-
-                    if (!response.ok) {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response;
+                    } else if (response.status === 429 && i < retries - 1) {
+                        // Handle 429 Too Many Requests by retrying
+                        console.log(`Attempt ${i + 1} failed. Status: 429. Retrying in ${delay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Exponentially increase delay
+                    } else {
                         throw new Error(`API response was not ok: Status ${response.status}`);
                     }
+                } catch (error) {
+                    if (i < retries - 1) {
+                        console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms... Error: ${error.message}`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            throw new Error(`All ${retries} attempts to fetch from the API failed.`);
+        }
 
+        // Function to call the proxy API and get the compatibility analysis
+        async function getCompatibilityAnalysis(itemA, itemB) {
+            // The prompt for the Gemini API
+            const prompt = `Perform a detailed compatibility analysis between "${itemA}" and "${itemB}". Structure the response with a clear heading for "Overall Compatibility", followed by a list of "Key Points" and a final "Conclusion".`;
+            
+            // The payload for the Vercel serverless function
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            };
+            
+            try {
+                const response = await exponentialBackoffFetch('/api/proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                // Check if the response is valid JSON
+                if (response.headers.get('content-type')?.includes('application/json')) {
                     const result = await response.json();
                     
-                    if (result.candidates && result.candidates.length > 0 && 
+                    if (result && result.candidates && result.candidates.length > 0 && 
                         result.candidates[0].content && result.candidates[0].content.parts &&
                         result.candidates[0].content.parts.length > 0) {
-                        return result.candidates[0].content.parts[0].text;
+                        
+                        const analysisText = result.candidates[0].content.parts[0].text;
+                        return analysisText;
                     } else {
-                        throw new Error('Invalid API response structure.');
+                        throw new Error('Unexpected API response structure.');
                     }
-                } catch (error) {
-                    console.error('API Error:', error);
-                    throw new Error(`API response error: ${error.message}`);
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`API response error: ${errorText}`);
                 }
-            };
+            } catch (error) {
+                console.error("API Error:", error);
+                throw new Error(`API response error: ${error.message}`);
+            }
+        }
 
-            analyzeBtn.addEventListener('click', async () => {
-                const component1 = component1El.value.trim();
-                const component2 = component2El.value.trim();
+        // Event listener for the "Analyze" button
+        analyzeBtn.addEventListener('click', async () => {
+            const itemA = itemAInput.value.trim();
+            const itemB = itemBInput.value.trim();
 
-                if (!component1 || !component2) {
-                    showModal('Please provide information for both components.');
-                    return;
-                }
+            // Clear previous results and errors
+            analysisContentDiv.innerHTML = '';
+            resultsDiv.classList.add('hidden');
+            errorBoxDiv.classList.add('hidden');
 
-                loadingEl.classList.remove('hidden');
-                resultsContainerEl.classList.add('hidden');
-                resultsEl.textContent = '';
-                analyzeBtn.disabled = true;
+            // Validate inputs
+            if (itemA === '' || itemB === '') {
+                errorMessageSpan.textContent = "Please enter both items to analyze.";
+                errorBoxDiv.classList.remove('hidden');
+                return;
+            }
 
-                try {
-                    const analysis = await getCompatibilityAnalysis(component1, component2);
-                    resultsEl.textContent = analysis;
-                    resultsContainerEl.classList.remove('hidden');
-                } catch (error) {
-                    showModal(`Failed to get compatibility data: ${error.message}`);
-                } finally {
-                    loadingEl.classList.add('hidden');
-                    analyzeBtn.disabled = false;
-                }
-            });
+            // Show loading animation and disable button
+            loadingDiv.classList.remove('hidden');
+            analyzeBtn.disabled = true;
+
+            try {
+                const analysis = await getCompatibilityAnalysis(itemA, itemB);
+                
+                // Format the output with markdown for better readability
+                const formattedHtml = marked.parse(analysis);
+                analysisContentDiv.innerHTML = formattedHtml;
+                
+                resultsDiv.classList.remove('hidden');
+            } catch (error) {
+                errorMessageSpan.textContent = error.message;
+                errorBoxDiv.classList.remove('hidden');
+            } finally {
+                // Hide loading and re-enable button
+                loadingDiv.classList.add('hidden');
+                analyzeBtn.disabled = false;
+            }
         });
+
+        // Add a simple markdown parser for formatting the response.
+        // This is not a full-featured library, but it helps with basic formatting.
+        const marked = {
+            parse(text) {
+                let html = text;
+                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+                html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
+                html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+                if (html.includes('<li>')) {
+                    html = '<ul>' + html + '</ul>';
+                }
+                html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+                html = html.replace(/\*(.*)\*/gim, '<em>$1</em>');
+                html = html.replace(/_{2}(.*)_{2}/gim, '<strong>$1</strong>');
+                html = html.replace(/_(.*)_/gim, '<em>$1</em>');
+                return html;
+            }
+        };
+
     </script>
 </body>
 </html>
