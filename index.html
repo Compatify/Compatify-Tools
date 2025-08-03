@@ -206,10 +206,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- Gemini API Configuration and Global Variables ---
-            // The API key is now correctly configured to use the 'VITE_API_KEY' environment variable from Vercel.
-            const apiKey = typeof process !== 'undefined' && process.env.VITE_API_KEY ? process.env.VITE_API_KEY : "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            // --- API Configuration and Global Variables ---
+            // The client-side code now calls a local proxy endpoint.
+            const apiUrl = `/api/proxy`;
             
             // Store the list of affiliate products loaded from a mock JSON file.
             let affiliateProducts = [];
@@ -338,33 +337,13 @@
             };
 
             /**
-             * Generates a compatibility analysis and tags using the Gemini API.
+             * Generates a compatibility analysis and tags by calling the local proxy endpoint.
              * @param {string[]} deviceNames - An array of device names to analyze.
              * @returns {Promise<Object>} A promise that resolves to the API's JSON response.
              */
             const getCompatibilityAnalysis = async (deviceNames) => {
                 const deviceList = deviceNames.map(name => `"${name}"`).join(', ');
                 const prompt = `You are a device compatibility expert. Given a list of devices, analyze their collective compatibility and provide a structured JSON response. The response must include a boolean 'isCompatible' for the group, a string 'reason' explaining why, and an array of strings 'compatibilityTags' with common technical specifications or potential issues. Analyze the compatibility of the following devices: ${deviceList}.`;
-                
-                const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "isCompatible": { "type": "BOOLEAN" },
-                                "reason": { "type": "STRING" },
-                                "compatibilityTags": {
-                                    "type": "ARRAY",
-                                    "items": { "type": "STRING" }
-                                }
-                            }
-                        }
-                    }
-                };
                 
                 let retries = 0;
                 const maxRetries = 3;
@@ -373,7 +352,7 @@
                         const response = await fetch(apiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                            body: JSON.stringify({ prompt: prompt })
                         });
 
                         if (!response.ok) {
@@ -382,15 +361,7 @@
                         }
 
                         const result = await response.json();
-                        if (result.candidates && result.candidates.length > 0 &&
-                            result.candidates[0].content && result.candidates[0].content.parts &&
-                            result.candidates[0].content.parts.length > 0) {
-                            const jsonText = result.candidates[0].content.parts[0].text;
-                            const parsedJson = JSON.parse(jsonText);
-                            return parsedJson;
-                        } else {
-                            throw new Error('Unexpected API response structure.');
-                        }
+                        return result;
                     } catch (error) {
                         retries++;
                         if (retries < maxRetries) {
@@ -496,12 +467,6 @@
                     showMessageBox("Please enter at least two device names to check compatibility.");
                     return;
                 }
-                
-                // The API key check now looks for the correct variable name 'VITE_API_KEY'
-                if (!apiKey) {
-                    showMessageBox("API key is not configured. Please set a 'VITE_API_KEY' environment variable and redeploy.");
-                    return;
-                }
 
                 // --- Button State Change for User Feedback ---
                 const originalText = checkBtn.textContent;
@@ -528,7 +493,7 @@
                     compatibilityMessageContainer.classList.add('bg-red-100', 'text-red-700');
                     compatibilityIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>`;
                     compatibilityMessage.textContent = 'Error: API Access Denied.';
-                    compatibilityReason.textContent = 'The API service responded with a 403 Forbidden error. This is not an issue with the application code, but with the API key or service itself. Please try again later.';
+                    compatibilityReason.textContent = 'An error occurred while communicating with the API. Please ensure your VITE_API_KEY is correctly configured in your Vercel project settings.';
                     tagsContainer.innerHTML = '';
                     productsContainer.innerHTML = `<p class="col-span-full text-center text-red-500">Error fetching recommendations.</p>`;
                     lucide.createIcons();
