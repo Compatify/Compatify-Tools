@@ -4,262 +4,455 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Optimized Title Tag for SEO -->
-    <title>Compatify: Device Compatibility Checker & Upgrade Roadmaps | Future-Proof Your Tech</title>
+    <title>Compatify: AI-Powered Device Compatibility Checker & Upgrade Roadmaps | Future-Proof Your Tech</title>
     <!-- Favicon (Browser Tab Logo) -->
-    <link rel="icon" href="Compatify-logo.PNG" type="image/png">
+    <link rel="icon" href="https://placehold.co/32x32/FFC107/FFFFFF?text=C" type="image/png">
     <!-- Meta Description for SEO -->
-    <meta name="description" content="Use Compatify to quickly check compatibility between any two devices, generate personalized upgrade roadmaps, and understand obsolescence risks for your tech.">
+    <meta name="description" content="Use Compatify to quickly check compatibility between any two devices using AI, generate personalized upgrade roadmaps, and understand obsolescence risks for your tech.">
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google AdSense Auto Ads Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2091022065516798"
-     crossorigin="anonymous"></script>
+    <!-- Lucide Icons CDN for visual flair -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f9fafb; /* Lighter background color */
+            background-color: #f9fafb; /* Light gray background */
+            line-height: 1.6;
         }
-        /* Custom styles for glowing button effect */
-        .glow-on-hover {
-            border: 2px solid;
-            position: relative;
-            z-index: 0;
-            border-radius: 10px;
-            overflow: hidden;
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); /* Blue gradient for header */
         }
-        .glow-on-hover:before {
-            content: '';
-            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
-            position: absolute;
-            top: -2px;
-            left:-2px;
-            background-size: 400%;
-            z-index: -1;
-            filter: blur(5px);
-            width: calc(100% + 4px);
-            height: calc(100% + 4px);
-            animation: glowing 20s linear infinite;
-            opacity: 0;
-            transition: opacity .3s ease-in-out;
-            border-radius: 10px;
+        
+        .nav-link.active {
+            font-weight: 600;
+            color: #3B82F6;
+            border-bottom: 2px solid #3B82F6;
         }
-        .glow-on-hover:active {
-            color: #000
+
+        .affiliate-product-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
         }
-        .glow-on-hover:active:after {
-            background: transparent;
+
+        .affiliate-product-card:hover {
+            transform: translateY(-5px);
         }
-        .glow-on-hover:hover:before {
-            opacity: 1;
+        
+        /* Loading spinner */
+        .loader {
+            border-top-color: #3B82F6;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
         }
-        .glow-on-hover:after {
-            z-index: -1;
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            left: 0;
-            top: 0;
-            border-radius: 10px;
+
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
         }
-        @keyframes glowing {
-            0% { background-position: 0 0; }
-            50% { background-position: 400% 0; }
-            100% { background-position: 0 0; }
+
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo and Branding -->
-                <div class="flex items-center">
-                    <a href="#home" class="flex-shrink-0">
-                        <img class="h-8 w-auto" src="https://placehold.co/40x40/3B82F6/FFFFFF?text=C" alt="Compatify Logo">
-                    </a>
-                    <span class="ml-2 font-bold text-xl text-indigo-600">Compatify</span>
-                </div>
-                <!-- Navigation Links -->
-                <nav class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-gray-500 hover:text-gray-900 nav-link">Home</a>
-                    <a href="#compatibility" class="text-gray-500 hover:text-gray-900 nav-link">Compatibility Checker</a>
-                    <a href="#roadmap" class="text-gray-500 hover:text-gray-900 nav-link">Upgrade Roadmap</a>
-                    <a href="#affiliate" class="text-gray-500 hover:text-gray-900 nav-link">Affiliate Tools</a>
-                </nav>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <span class="text-3xl font-bold tracking-tight">Compatify</span>
             </div>
+            <nav class="hidden md:flex space-x-6 text-lg font-medium">
+                <a href="#home" class="nav-link transition duration-300 hover:text-gray-200">Home</a>
+                <a href="#about" class="nav-link transition duration-300 hover:text-gray-200">About</a>
+                <a href="#contact" class="nav-link transition duration-300 hover:text-gray-200">Contact</a>
+            </nav>
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <main class="flex-grow container mx-auto px-6 py-10">
+        <div id="home-page" class="page-content">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 text-center mb-4">
+                AI-Powered Device Compatibility Checker
+            </h1>
+            <p class="text-lg text-gray-600 text-center max-w-2xl mx-auto mb-12">
+                Use AI to instantly check compatibility, get a detailed analysis, and find recommended products.
+            </p>
 
-        <!-- Home Page Section -->
-        <div id="home-page" class="hidden">
-            <h1 class="text-3xl font-bold text-gray-900">Welcome to Compatify</h1>
-            <p class="mt-4 text-gray-600">Your one-stop tool for checking device compatibility, planning upgrades, and finding the right tech accessories.</p>
-        </div>
-
-        <!-- Compatibility Checker Section -->
-        <div id="compatibility-page" class="hidden">
-            <h1 class="text-3xl font-bold text-gray-900 mb-6">Compatibility Checker</h1>
-            <p class="text-lg text-gray-700 mb-8">Select two devices to check for compatibility and potential issues. This tool helps you ensure a seamless connection between your gadgets.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Device 1 Input -->
-                <div class="p-6 bg-white rounded-xl shadow-lg flex flex-col items-center">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Device 1</h2>
-                    <input type="text" id="device1-input" placeholder="e.g., iPhone 15 Pro Max" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200">
-                    <div id="device1-tags" class="mt-4 flex flex-wrap gap-2 justify-center">
-                        <span class="text-sm px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">USB-C</span>
-                        <span class="text-sm px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">Thunderbolt 4</span>
+            <!-- Compatibility Checker Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Check Compatibility</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="device-a-input" class="block text-sm font-medium text-gray-700 mb-2">Device 1</label>
+                        <input type="text" id="device-a-input" placeholder="e.g., MacBook Pro M3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label for="device-b-input" class="block text-sm font-medium text-gray-700 mb-2">Device 2</label>
+                        <input type="text" id="device-b-input" placeholder="e.g., CalDigit TS4 Hub" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     </div>
                 </div>
-
-                <!-- Device 2 Input -->
-                <div class="p-6 bg-white rounded-xl shadow-lg flex flex-col items-center">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Device 2</h2>
-                    <input type="text" id="device2-input" placeholder="e.g., Anker 5-in-1 Hub" class="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200">
-                    <div id="device2-tags" class="mt-4 flex flex-wrap gap-2 justify-center">
-                        <span class="text-sm px-3 py-1 bg-green-100 text-green-800 rounded-full">HDMI 2.0</span>
-                        <span class="text-sm px-3 py-1 bg-green-100 text-green-800 rounded-full">USB 3.0</span>
-                    </div>
+                <div class="mt-8 text-center">
+                    <button id="check-compatibility-btn" class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Check Compatibility
+                    </button>
                 </div>
             </div>
 
-            <div class="mt-8 text-center">
-                <button id="check-compatibility-btn" class="glow-on-hover text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg transform hover:scale-105 transition-all duration-300">
-                    Check Compatibility
-                </button>
+            <!-- Compatibility Result Section -->
+            <div id="compatibility-result-section" class="mt-12 bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Compatibility Analysis</h2>
+                
+                <!-- Loading State -->
+                <div id="loading-spinner" class="flex justify-center items-center h-32 hidden">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+                </div>
+                
+                <!-- Compatibility Message -->
+                <div id="compatibility-message-container" class="flex items-center gap-4 p-4 rounded-lg">
+                    <div id="compatibility-icon" class="text-3xl"></div>
+                    <p id="compatibility-message" class="text-lg font-semibold"></p>
+                </div>
+                
+                <!-- Detailed Reason -->
+                <div class="mt-4">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Detailed Reason</h3>
+                    <p id="compatibility-reason" class="text-gray-600"></p>
+                </div>
+                
+                <!-- Compatibility Tags -->
+                <div class="mt-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Key Specifications</h3>
+                    <div id="compatibility-tags-container" class="flex flex-wrap gap-2">
+                        <!-- Tags will be injected here -->
+                    </div>
+                </div>
             </div>
 
-            <div id="compatibility-result" class="mt-8 p-6 bg-white rounded-xl shadow-lg hidden">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Compatibility Result</h2>
-                <div id="result-content" class="text-center italic text-gray-500">No device selected</div>
+            <!-- Recommended Products Section -->
+            <div id="recommended-products-section" class="mt-12">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-6">Recommended Products</h2>
+                <div id="affiliate-products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Affiliate product cards will be injected here -->
+                </div>
             </div>
         </div>
 
-        <!-- Upgrade Roadmap Section -->
-        <div id="roadmap-page" class="hidden">
-            <h1 class="text-3xl font-bold text-gray-900">Upgrade Roadmap</h1>
-            <p class="mt-4 text-gray-600">Plan your future tech purchases with personalized recommendations based on your current devices.</p>
+        <!-- Other Pages (Hidden by default) -->
+        <div id="about-page" class="page-content hidden">
+            <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-6">About Compatify</h1>
+            <p class="text-lg text-gray-600 text-center max-w-2xl mx-auto">
+                Compatify is your go-to tool for ensuring your tech works together seamlessly. We use cutting-edge AI to provide instant and accurate compatibility checks, so you can make informed decisions before you buy. Our mission is to reduce e-waste and empower you with the knowledge to future-proof your tech ecosystem.
+            </p>
         </div>
 
-        <!-- Affiliate Tools Section -->
-        <div id="affiliate-page" class="hidden">
-            <h1 class="text-3xl font-bold text-gray-900 mb-6">Affiliate Products</h1>
-            <p class="text-lg text-gray-700 mb-8">Explore a curated selection of compatible products and accessories to enhance your tech experience. The content on this page is served via a simple JSON file to demonstrate basic data fetching.</p>
-            <div id="affiliate-products-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Products will be loaded here by JavaScript -->
-                <p class="text-center italic text-gray-500">Loading products...</p>
-            </div>
+        <div id="contact-page" class="page-content hidden">
+            <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-6">Contact Us</h1>
+            <p class="text-lg text-gray-600 text-center max-w-2xl mx-auto">
+                Have a question or a suggestion? We'd love to hear from you! Please reach out to us at <a href="mailto:support@compatify.com" class="text-blue-600 hover:underline">support@compatify.com</a>.
+            </p>
         </div>
+
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Compatify. All rights reserved.</p>
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 Compatify. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- JavaScript for dynamic content loading -->
+    <!-- JavaScript for dynamic functionality -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Function to render the current page based on hash
-            const renderPage = (page) => {
-                // Hide all pages
-                document.querySelectorAll('div[id$="-page"]').forEach(el => {
-                    el.classList.add('hidden');
-                });
-                // Show the selected page
-                const targetPage = document.getElementById(`${page}-page`);
-                if (targetPage) {
-                    targetPage.classList.remove('hidden');
-                }
-            };
 
-            // --- IMPROVED fetchAffiliateProducts function with better error logging ---
+            // --- Gemini API Configuration and Global Variables ---
+            // The API key will be provided at runtime by the Canvas environment.
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            // Store the list of affiliate products loaded from a mock JSON file.
+            let affiliateProducts = [];
+
+            // --- DOM Element References ---
+            const deviceAInput = document.getElementById('device-a-input');
+            const deviceBInput = document.getElementById('device-b-input');
+            const checkBtn = document.getElementById('check-compatibility-btn');
+            const resultSection = document.getElementById('compatibility-result-section');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const compatibilityMessageContainer = document.getElementById('compatibility-message-container');
+            const compatibilityIcon = document.getElementById('compatibility-icon');
+            const compatibilityMessage = document.getElementById('compatibility-message');
+            const compatibilityReason = document.getElementById('compatibility-reason');
+            const tagsContainer = document.getElementById('compatibility-tags-container');
+            const productsContainer = document.getElementById('affiliate-products-container');
+
+
+            // --- Core Functions ---
+
+            /**
+             * Handles fetching the list of affiliate products.
+             * In a real application, this would be a fetch call to a JSON file or a database.
+             * For this demo, we use a hardcoded array.
+             */
             const fetchAffiliateProducts = () => {
-                const container = document.getElementById('affiliate-products-container');
-                container.innerHTML = `<p class="text-center italic text-gray-500">Loading products...</p>`;
-
-                fetch('affiliate_products.json')
-                    .then(response => {
-                        console.log('Fetch response status:', response.status);
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        // Read the response as text first for better debugging
-                        return response.text();
-                    })
-                    .then(textData => {
-                        console.log('Received raw response text:', textData);
-                        try {
-                            const data = JSON.parse(textData);
-                            renderProducts(data);
-                        } catch (error) {
-                            console.error('An error occurred during JSON parsing:', error);
-                            container.innerHTML = `<p class="text-center italic text-gray-500">Error parsing product data. Check the browser console for details.</p>`;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('An error occurred during fetch:', error);
-                        container.innerHTML = `<p class="text-center italic text-gray-500">Could not load products. Please check the network tab and console for errors.</p>`;
-                    });
-            };
-            // --- End of updated function ---
-
-            const renderProducts = (products) => {
-                const container = document.getElementById('affiliate-products-container');
-                container.innerHTML = ''; // Clear loading message
-
-                products.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300';
-                    productCard.innerHTML = `
-                        <a href="${product.affiliate_link}" target="_blank" class="block">
-                            <div class="h-48 w-full bg-gray-100 flex items-center justify-center">
-                                <img src="${product.image_url}" alt="${product.name}" class="h-full object-contain p-4" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e5e7eb/4b5563?text=Image+Not+Found';">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="text-lg font-semibold text-gray-900">${product.name}</h3>
-                                <p class="text-sm text-gray-600 mt-1">${product.description.substring(0, 100)}...</p>
-                            </div>
-                        </a>
-                    `;
-                    container.appendChild(productCard);
-                });
+                // Mocking the fetch of a JSON file for the purpose of this demo.
+                affiliateProducts = [
+                    {
+                        name: "Anker 7-in-1 USB-C Hub",
+                        description: "Expand your USB-C port with HDMI, USB-A, and more.",
+                        tags: ["USB-C", "HDMI", "USB-A"],
+                        link: "#",
+                        imageUrl: "https://placehold.co/400x250/F5F5F5/8C8C8C?text=Product+Image"
+                    },
+                    {
+                        name: "Apple Thunderbolt 4 Cable",
+                        description: "High-speed Thunderbolt 4 cable for data and power.",
+                        tags: ["Thunderbolt 4", "USB-C", "Power Delivery"],
+                        link: "#",
+                        imageUrl: "https://placehold.co/400x250/F5F5F5/8C8C8C?text=Product+Image"
+                    },
+                    {
+                        name: "Belkin 3-in-1 Wireless Charger",
+                        description: "Charge your iPhone, Apple Watch, and AirPods simultaneously.",
+                        tags: ["MagSafe", "Qi Wireless"],
+                        link: "#",
+                        imageUrl: "https://placehold.co/400x250/F5F5F5/8C8C8C?text=Product+Image"
+                    },
+                    {
+                        name: "UGREEN USB-C to 3.5mm Adapter",
+                        description: "Connect your wired headphones to a USB-C device.",
+                        tags: ["USB-C", "3.5mm Jack"],
+                        link: "#",
+                        imageUrl: "https://placehold.co/400x250/F5F5F5/8C8C8C?text=Product+Image"
+                    },
+                    {
+                        name: "Samsung EVO Select MicroSD",
+                        description: "High-speed MicroSD card for all your storage needs.",
+                        tags: ["MicroSD", "SD Card Reader"],
+                        link: "#",
+                        imageUrl: "https://placehold.co/400x250/F5F5F5/8C8C8C?text=Product+Image"
+                    },
+                ];
             };
 
-            // This is a placeholder function for the compatibility checker
-            const updateCompatibilityResult = (resultText) => {
-                const element = document.getElementById('result-content');
-                const container = document.getElementById('compatibility-result');
-                container.classList.remove('hidden');
+            /**
+             * Renders the affiliate products based on the given tags.
+             * @param {string[]} requiredTags - An array of tags to filter products by.
+             */
+            const renderAffiliateProducts = (requiredTags = []) => {
+                productsContainer.innerHTML = ''; // Clear previous products
 
-                if (resultText) {
-                    element.textContent = resultText;
-                    element.classList.remove('text-center', 'italic', 'text-gray-500');
-                    element.classList.add('text-left', 'text-gray-900', 'font-semibold');
+                if (requiredTags.length === 0) {
+                    const noProductsMessage = document.createElement('p');
+                    noProductsMessage.className = 'col-span-full text-center text-gray-500 italic';
+                    noProductsMessage.textContent = 'Enter two devices above to see product recommendations.';
+                    productsContainer.appendChild(noProductsMessage);
+                    return;
+                }
+
+                // Filter products that have at least one of the required tags
+                const filteredProducts = affiliateProducts.filter(product =>
+                    product.tags.some(tag => requiredTags.includes(tag))
+                );
+
+                if (filteredProducts.length === 0) {
+                    const noProductsMessage = document.createElement('p');
+                    noProductsMessage.className = 'col-span-full text-center text-gray-500 italic';
+                    noProductsMessage.textContent = 'No products found matching the compatibility tags.';
+                    productsContainer.appendChild(noProductsMessage);
                 } else {
-                    element.textContent = 'No device selected';
-                    element.classList.add('text-center', 'italic', 'text-gray-500');
-                    element.classList.remove('text-left', 'text-gray-900', 'font-semibold');
+                    filteredProducts.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'affiliate-product-card bg-white rounded-lg p-5 flex flex-col justify-between';
+                        productCard.innerHTML = `
+                            <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-auto rounded-md mb-4">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">${product.name}</h3>
+                            <p class="text-gray-600 mb-4 flex-grow">${product.description}</p>
+                            <a href="${product.link}" target="_blank" class="w-full bg-blue-600 text-white text-center py-2 px-4 rounded-full font-medium hover:bg-blue-700 transition duration-300">
+                                View Product
+                            </a>
+                        `;
+                        productsContainer.appendChild(productCard);
+                    });
                 }
             };
-
-            // Initial load of affiliate products
-            fetchAffiliateProducts();
             
+            /**
+             * Generates a compatibility analysis and tags using the Gemini API.
+             * @param {string} deviceA - The name of the first device.
+             * @param {string} deviceB - The name of the second device.
+             * @returns {Promise<Object>} A promise that resolves to the API's JSON response.
+             */
+            const getCompatibilityAnalysis = async (deviceA, deviceB) => {
+                const prompt = `You are a device compatibility expert. Given two devices, analyze their compatibility and provide a structured JSON response. The response must include a boolean 'isCompatible', a string 'reason' explaining why, and an array of strings 'compatibilityTags' with relevant technical specifications. Analyze the compatibility between "${deviceA}" and "${deviceB}".`;
+
+                const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                
+                // Define the expected JSON response structure using a schema.
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "isCompatible": { "type": "BOOLEAN" },
+                                "reason": { "type": "STRING" },
+                                "compatibilityTags": {
+                                    "type": "ARRAY",
+                                    "items": { "type": "STRING" }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                // The fetch call with retry logic using exponential backoff
+                let retries = 0;
+                const maxRetries = 3;
+                while (retries < maxRetries) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`API response error: ${response.statusText}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            const jsonText = result.candidates[0].content.parts[0].text;
+                            const parsedJson = JSON.parse(jsonText);
+                            return parsedJson;
+                        } else {
+                            throw new Error('Unexpected API response structure.');
+                        }
+                    } catch (error) {
+                        retries++;
+                        if (retries < maxRetries) {
+                            const delay = Math.pow(2, retries) * 1000; // Exponential backoff
+                            console.error(`Attempt ${retries} failed. Retrying in ${delay}ms...`, error);
+                            await new Promise(res => setTimeout(res, delay));
+                        } else {
+                            throw error;
+                        }
+                    }
+                }
+            };
+            
+            /**
+             * Renders the compatibility results and affiliate products on the UI.
+             * @param {Object} data - The structured JSON data from the API.
+             */
+            const displayResults = (data) => {
+                resultSection.classList.remove('hidden');
+                loadingSpinner.classList.add('hidden');
+                
+                // Clear previous tags
+                tagsContainer.innerHTML = '';
+                
+                // Update compatibility message and icon
+                if (data.isCompatible) {
+                    compatibilityMessageContainer.classList.remove('bg-red-100', 'text-red-700');
+                    compatibilityMessageContainer.classList.add('bg-green-100', 'text-green-700');
+                    compatibilityIcon.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>`;
+                    compatibilityMessage.textContent = 'Devices are compatible!';
+                } else {
+                    compatibilityMessageContainer.classList.remove('bg-green-100', 'text-green-700');
+                    compatibilityMessageContainer.classList.add('bg-red-100', 'text-red-700');
+                    compatibilityIcon.innerHTML = `<i data-lucide="x-circle" class="w-6 h-6 text-red-600"></i>`;
+                    compatibilityMessage.textContent = 'Devices are not compatible.';
+                }
+
+                // Update the detailed reason
+                compatibilityReason.textContent = data.reason;
+                
+                // Render the tags
+                if (data.compatibilityTags && data.compatibilityTags.length > 0) {
+                    data.compatibilityTags.forEach(tag => {
+                        const tagElement = document.createElement('span');
+                        tagElement.className = 'bg-gray-200 text-gray-800 text-sm font-medium px-3 py-1 rounded-full';
+                        tagElement.textContent = tag;
+                        tagsContainer.appendChild(tagElement);
+                    });
+                } else {
+                    tagsContainer.innerHTML = `<p class="text-gray-500 italic">No specific tags found.</p>`;
+                }
+                
+                // Render affiliate products based on the new tags
+                renderAffiliateProducts(data.compatibilityTags);
+                
+                // Re-initialize lucide icons
+                lucide.createIcons();
+            };
+
+            // --- Event Listeners and Initial Setup ---
+
+            checkBtn.addEventListener('click', async () => {
+                const deviceA = deviceAInput.value.trim();
+                const deviceB = deviceBInput.value.trim();
+
+                if (!deviceA || !deviceB) {
+                    // Simple message box for validation
+                    alert("Please enter both device names.");
+                    return;
+                }
+
+                // Reset UI and show loading state
+                resultSection.classList.add('hidden');
+                loadingSpinner.classList.remove('hidden');
+                renderAffiliateProducts([]); // Clear old products
+                productsContainer.innerHTML = `<p class="col-span-full text-center text-gray-500 italic">Checking for recommendations...</p>`;
+
+                try {
+                    const compatibilityData = await getCompatibilityAnalysis(deviceA, deviceB);
+                    displayResults(compatibilityData);
+                } catch (error) {
+                    console.error("Failed to get compatibility data:", error);
+                    loadingSpinner.classList.add('hidden');
+                    // Display an error message to the user
+                    resultSection.classList.remove('hidden');
+                    compatibilityMessageContainer.classList.remove('bg-green-100', 'text-green-700');
+                    compatibilityMessageContainer.classList.add('bg-red-100', 'text-red-700');
+                    compatibilityIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>`;
+                    compatibilityMessage.textContent = 'Error: Could not perform compatibility check.';
+                    compatibilityReason.textContent = 'Please try again later or refine your search terms.';
+                    tagsContainer.innerHTML = '';
+                    productsContainer.innerHTML = `<p class="col-span-full text-center text-red-500">Error fetching recommendations.</p>`;
+                    lucide.createIcons();
+                }
+            });
+
             // Set up navigation
             const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page-content');
+
+            const renderPage = (pageId) => {
+                pages.forEach(page => {
+                    page.classList.add('hidden');
+                });
+                document.getElementById(`${pageId}-page`).classList.remove('hidden');
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${pageId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+            
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -269,15 +462,16 @@
                 });
             });
 
-            // Initial page render based on URL hash or default
-            const initialPage = window.location.hash.substring(1) || 'home';
-            renderPage(initialPage);
-
             // Handle browser back/forward buttons
             window.addEventListener('popstate', () => {
                 const page = window.location.hash.substring(1) || 'home';
                 renderPage(page);
             });
+
+            // Initial load of affiliate products and page render
+            fetchAffiliateProducts();
+            const initialPage = window.location.hash.substring(1) || 'home';
+            renderPage(initialPage);
         });
     </script>
 </body>
