@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compatify</title>
-    <!-- Favicon using the uploaded logo -->
-    <link rel="icon" type="image/jpeg" href="http://googleusercontent.com/file_content/53">
+    <!-- Favicon using an inline SVG -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231d4ed8' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E">
     <!-- Use Tailwind CSS for a professional, responsive design -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Use Inter font for a clean, modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Use Phosphor Icons for a clean set of icons for social sharing -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/dist/phosphor.js"></script>
     <!-- Use a simple Markdown parser to format the AI's analysis -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
 
@@ -33,89 +35,257 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Custom accordion styles for the FAQ */
+        .accordion-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .accordion-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1a202c;
+            background-color: #fff;
+            transition: background-color 0.2s ease-in-out;
+            border: none;
+        }
+        .accordion-button:hover {
+            background-color: #f7fafc;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+            padding: 0 1.5rem;
+            background-color: #f7fafc;
+        }
+        .accordion-content.active {
+            max-height: 500px; /* A large enough value to handle content */
+            padding: 1.5rem;
+        }
+        .active-link {
+            color: #1d4ed8; /* Blue for the active link */
+            font-weight: 700;
+        }
     </style>
 </head>
-<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-4">
+<body class="bg-gray-50 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- Main Application Container -->
-    <main class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-6 md:p-10">
-
-        <!-- Header Section with Logo -->
-        <header class="text-center mb-10">
-            <!-- Logo replaces the text heading -->
-            <img src="http://googleusercontent.com/file_content/53" alt="Compatify Logo" class="mx-auto w-24 mb-3">
-            <h1 class="text-lg text-gray-500 font-bold mb-3 tracking-tight">Compatify</h1>
-            <p class="text-lg text-gray-500">
-                Instantly check the compatibility of your favorite tech and accessories.
-            </p>
-        </header>
-
-        <!-- Input Form Section -->
-        <section class="mb-10">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <input type="text" id="itemA" placeholder="e.g., MacBook Pro M3"
-                       class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
-                <input type="text" id="itemB" placeholder="e.g., HDMI Cord"
-                       class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
+    <!-- Top Navigation -->
+    <nav class="w-full bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo & Site Title -->
+                <div class="flex-shrink-0 flex items-center">
+                    <svg class="w-8 h-8 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="ml-2 text-2xl font-bold text-gray-900">Compatify</span>
+                </div>
+                <!-- Navigation Links -->
+                <div class="flex space-x-8">
+                    <button id="nav-home" class="text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium active-link">Home</button>
+                    <button id="nav-how-it-works" class="text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium">How it Works</button>
+                    <button id="nav-about-us" class="text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium">About Us</button>
+                </div>
             </div>
-            <div class="flex justify-center mt-6">
-                <button id="analyzeBtn"
-                        class="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200">
-                    Analyze Compatibility
-                </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="w-full flex-grow flex flex-col items-center justify-center p-4">
+        <!-- Main Application Container - Home Page -->
+        <main id="home-page" class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-6 md:p-10 transition-transform duration-300">
+
+            <!-- Header Section with Logo -->
+            <header class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl text-gray-900 font-bold mb-3 tracking-tight">Tech Compatibility, Instantly.</h1>
+                <p class="text-lg text-gray-500">
+                    Enter any two tech items and let our AI engine check their compatibility.
+                </p>
+            </header>
+
+            <!-- Input Form Section -->
+            <section class="mb-6">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" id="itemA" placeholder="e.g., MacBook Pro M3"
+                           class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
+                    <input type="text" id="itemB" placeholder="e.g., USB-C Hub"
+                           class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
+                </div>
+                <div class="flex justify-center mt-6">
+                    <button id="analyzeBtn"
+                            class="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200">
+                        Analyze Compatibility
+                    </button>
+                </div>
+            </section>
+
+            <!-- "Try It Out" Section (Simplified) -->
+            <section class="text-center mb-10">
+                <div class="flex flex-wrap justify-center gap-2 md:gap-4">
+                    <button class="try-example bg-gray-100 text-gray-700 text-sm md:text-base font-medium px-4 py-2 rounded-full hover:bg-gray-200 transition-colors"
+                            data-item-a="iPhone 16 Pro" data-item-b="Bluetooth Headphones">Try: iPhone 16 Pro & Bluetooth Headphones</button>
+                    <button class="try-example bg-gray-100 text-gray-700 text-sm md:text-base font-medium px-4 py-2 rounded-full hover:bg-gray-200 transition-colors"
+                            data-item-a="Dell XPS 15" data-item-b="Monitor with HDMI">Try: Dell XPS 15 & HDMI Monitor</button>
+                    <button class="try-example bg-gray-100 text-gray-700 text-sm md:text-base font-medium px-4 py-2 rounded-full hover:bg-gray-200 transition-colors"
+                            data-item-a="PlayStation 5" data-item-b="4K TV">Try: PlayStation 5 & 4K TV</button>
+                </div>
+            </section>
+
+            <!-- Results Section Container (Hidden by default) -->
+            <section id="resultsDiv" class="hidden">
+                <div class="space-y-8">
+                    <!-- Compatibility Analysis Card -->
+                    <div class="bg-blue-50 p-6 rounded-2xl shadow-inner border border-blue-200">
+                        <h2 class="text-3xl font-bold text-blue-900 mb-4 flex items-center">
+                            <i class="ph-bold ph-check-circle text-blue-600 text-3xl mr-2"></i>
+                            Compatibility Analysis
+                        </h2>
+                        
+                        <!-- New section for clear status and summary -->
+                        <div class="mb-4 p-4 rounded-xl border-2 bg-white">
+                            <h3 id="compatibilityStatus" class="text-2xl font-bold mb-2"></h3>
+                            <p id="compatibilitySummary" class="text-gray-700"></p>
+                        </div>
+
+                        <!-- Original detailed analysis content -->
+                        <div id="analysisContent" class="prose max-w-none text-gray-700 leading-relaxed">
+                            <!-- Detailed analysis content will be injected here as formatted Markdown -->
+                        </div>
+                    </div>
+
+                    <!-- Affiliate Product Card (Hidden by default) -->
+                    <div id="affiliateProductDiv" class="hidden bg-white p-6 rounded-2xl shadow-xl border border-gray-200 transform transition-transform duration-300 hover:scale-[1.01]">
+                        <div class="flex flex-col sm:flex-row items-center gap-6">
+                            <div class="w-full sm:w-auto flex-shrink-0">
+                                <img id="productImage" src="https://placehold.co/128x128/E2E8F0/1A202C?text=No+Image" alt="Recommended Product"
+                                     class="w-32 h-32 object-contain rounded-xl border border-gray-200 p-2 transition-transform duration-200 hover:scale-105">
+                            </div>
+                            <div class="flex-1 text-center sm:text-left">
+                                <!-- Title will change based on compatibility status -->
+                                <h3 id="productRecommendationTitle" class="text-2xl font-bold text-gray-900 mb-1">Recommended Product</h3>
+                                <h4 id="productName" class="text-lg font-semibold text-gray-800">Product Name Placeholder</h4>
+                                <p id="productDescription" class="text-gray-500 mt-2 text-sm leading-relaxed">Product description will appear here.</p>
+                                <a id="affiliateLink" href="#" target="_blank" rel="noopener noreferrer"
+                                   class="mt-4 inline-block bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200">
+                                    View on Amazon
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Sharing Section -->
+                    <div id="shareDiv" class="flex flex-col items-center justify-center mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Share Your Analysis</h3>
+                        <div class="flex space-x-4">
+                            <button id="share-twitter" class="share-button p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-md">
+                                <i class="ph-bold ph-twitter-logo text-xl"></i>
+                            </button>
+                            <button id="share-facebook" class="share-button p-3 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition-colors shadow-md">
+                                <i class="ph-bold ph-facebook-logo text-xl"></i>
+                            </button>
+                            <button id="share-linkedin" class="share-button p-3 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors shadow-md">
+                                <i class="ph-bold ph-linkedin-logo text-xl"></i>
+                            </button>
+                            <button id="share-copy" class="share-button p-3 bg-gray-300 text-gray-800 rounded-full hover:bg-gray-400 transition-colors shadow-md">
+                                <i class="ph-bold ph-link text-xl"></i>
+                            </button>
+                        </div>
+                        <div id="share-message" class="text-sm text-green-700 mt-2 hidden">Link copied to clipboard!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="flex flex-col items-center justify-center mt-8 space-y-3 hidden">
+                <div class="loading-animation"></div>
+                <span id="loading-message" class="text-lg text-gray-600 font-medium">Analyzing compatibility...</span>
+            </div>
+
+            <!-- Error Message Box -->
+            <div id="errorBox" class="mt-8 p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl shadow-sm hidden">
+                <strong class="font-semibold">Oh no! An error occurred:</strong>
+                <span id="errorMessage"></span>
+            </div>
+        </main>
+
+        <!-- How It Works Page (Hidden by default) -->
+        <section id="how-it-works-page" class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 hidden transition-transform duration-300">
+            <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">How It Works</h2>
+            <div class="space-y-10">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="bg-blue-100 text-blue-600 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0 text-3xl font-bold">1</div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Input Your Items</h3>
+                        <p class="text-gray-600">Simply enter the two tech items you want to check for compatibility, such as a "MacBook Pro M3" and a "USB-C Hub." Our system understands natural language, so there's no need for complex codes or part numbers.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="bg-blue-100 text-blue-600 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0 text-3xl font-bold">2</div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Get an Instant Analysis</h3>
+                        <p class="text-gray-600">Powered by advanced AI, Compatify instantly analyzes the specifications and interfaces of your items. You'll receive a detailed, easy-to-understand breakdown of whether they are compatible and what to look out for.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="bg-blue-100 text-blue-600 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0 text-3xl font-bold">3</div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Find a Perfect Solution</h3>
+                        <p class="text-gray-600">If a problem is found, our system will intelligently suggest a compatible product from our curated list. We provide a direct link to the product on a trusted retailer, saving you time and money.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- FAQ Section -->
+            <div class="mt-12">
+                <h3 class="text-3xl font-bold text-gray-900 mb-6 text-center">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="accordion-item rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                        <button class="accordion-button">
+                            <span>How accurate is the compatibility check?</span>
+                            <i class="ph-bold ph-plus text-lg accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p class="text-gray-600 leading-relaxed">Our AI model is trained on a vast amount of technical data to provide highly accurate analyses. However, we always recommend double-checking the product specifications before making a purchase, as new products are released daily.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                        <button class="accordion-button">
+                            <span>Why are there affiliate links?</span>
+                            <i class="ph-bold ph-plus text-lg accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p class="text-gray-600 leading-relaxed">The affiliate links help support this free service. When you make a purchase through one of our links, we may earn a small commission at no extra cost to you. This allows us to keep the site running and continue to improve the service for everyone.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Results Section Container (Hidden by default) -->
-        <section id="resultsDiv" class="hidden">
-            <div class="space-y-8">
-                <!-- Compatibility Analysis Card -->
-                <div class="bg-blue-50 p-6 rounded-2xl shadow-inner border border-blue-200">
-                    <h2 class="text-3xl font-bold text-blue-900 mb-4 flex items-center">
-                        <svg class="w-8 h-8 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.618a8.001 8.001 0 010 11.236l-3.35 3.35a8.001 8.001 0 01-11.236 0l-3.35-3.35a8.001 8.001 0 010-11.236l3.35-3.35a8.001 8.001 0 0111.236 0l3.35 3.35z"></path>
-                        </svg>
-                        Compatibility Analysis
-                    </h2>
-                    <div id="analysisContent" class="prose max-w-none text-gray-700 leading-relaxed">
-                        <!-- Analysis content will be injected here as formatted Markdown -->
-                    </div>
-                </div>
-
-                <!-- Affiliate Product Card (Hidden by default) -->
-                <div id="affiliateProductDiv" class="hidden bg-white p-6 rounded-2xl shadow-xl border border-gray-200 transform transition-transform duration-300 hover:scale-[1.01]">
-                    <div class="flex flex-col sm:flex-row items-center gap-6">
-                        <div class="w-full sm:w-auto flex-shrink-0">
-                            <img id="productImage" src="https://placehold.co/128x128/E2E8F0/1A202C?text=No+Image" alt="Recommended Product"
-                                 class="w-32 h-32 object-contain rounded-xl border border-gray-200 p-2 transition-transform duration-200 hover:scale-105">
-                        </div>
-                        <div class="flex-1 text-center sm:text-left">
-                            <h3 id="productRecommendationTitle" class="text-2xl font-bold text-gray-900 mb-1">Recommended Product</h3>
-                            <h4 id="productName" class="text-lg font-semibold text-gray-800">Product Name Placeholder</h4>
-                            <p id="productDescription" class="text-gray-500 mt-2 text-sm leading-relaxed">Product description will appear here.</p>
-                            <a id="affiliateLink" href="#" target="_blank" rel="noopener noreferrer"
-                               class="mt-4 inline-block bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200">
-                                View on Amazon
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        <!-- About Us Page (Hidden by default) -->
+        <section id="about-us-page" class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 hidden transition-transform duration-300">
+            <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">About Us</h2>
+            <div class="prose max-w-none text-gray-700 leading-relaxed text-center space-y-4">
+                <p>Welcome to Compatify, where we believe that technology should be simple and seamless. We know the frustration of buying a new accessory only to find out it doesn't work with your device. That's why we created Compatify—a fast, free, and reliable tool to check compatibility for you.</p>
+                <p>Our mission is to take the guesswork out of tech purchases. We're a small team of developers and tech enthusiasts committed to making your digital life easier. The core of our service is powered by the latest advancements in AI, which allows us to provide accurate, on-the-spot analysis for a huge range of products.</p>
+                <p>We're passionate about helping you get the most out of your technology. Thank you for using Compatify!</p>
             </div>
         </section>
+    </div>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="flex flex-col items-center justify-center mt-8 space-y-3 hidden">
-            <div class="loading-animation"></div>
-            <span class="text-lg text-gray-600 font-medium">Analyzing compatibility...</span>
+    <!-- Footer Section -->
+    <footer class="w-full bg-gray-900 text-gray-400 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2025 Compatify. All rights reserved.</p>
+            <div class="mt-2 space-x-4">
+                <a href="#" class="hover:text-blue-500 transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-blue-500 transition-colors">Terms of Service</a>
+            </div>
         </div>
-
-        <!-- Error Message Box -->
-        <div id="errorBox" class="mt-8 p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl shadow-sm hidden">
-            <strong class="font-semibold">Oh no! An error occurred:</strong>
-            <span id="errorMessage"></span>
-        </div>
-
-    </main>
+    </footer>
 
     <!-- The core logic for the application -->
     <script>
@@ -141,21 +311,46 @@
             }
         };
 
-        // Get references to DOM elements
+        // --- DOM Element References ---
         const analyzeBtn = document.getElementById('analyzeBtn');
         const itemAInput = document.getElementById('itemA');
         const itemBInput = document.getElementById('itemB');
         const resultsDiv = document.getElementById('resultsDiv');
+        const compatibilityStatus = document.getElementById('compatibilityStatus');
+        const compatibilitySummary = document.getElementById('compatibilitySummary');
         const analysisContentDiv = document.getElementById('analysisContent');
         const affiliateProductDiv = document.getElementById('affiliateProductDiv');
-        const productRecommendationTitle = document.getElementById('productRecommendationTitle');
         const productName = document.getElementById('productName');
         const productDescription = document.getElementById('productDescription');
         const productImage = document.getElementById('productImage');
         const affiliateLink = document.getElementById('affiliateLink');
         const loadingDiv = document.getElementById('loading');
+        const loadingMessageSpan = document.getElementById('loading-message');
         const errorBoxDiv = document.getElementById('errorBox');
         const errorMessageSpan = document.getElementById('errorMessage');
+        const shareDiv = document.getElementById('shareDiv');
+        const shareMessageDiv = document.getElementById('share-message');
+        const productRecommendationTitle = document.getElementById('productRecommendationTitle');
+
+        // Page and Navigation elements
+        const homePage = document.getElementById('home-page');
+        const howItWorksPage = document.getElementById('how-it-works-page');
+        const aboutUsPage = document.getElementById('about-us-page');
+        const navHome = document.getElementById('nav-home');
+        const navHowItWorks = document.getElementById('nav-how-it-works');
+        const navAboutUs = document.getElementById('nav-about-us');
+
+        // --- Data and State ---
+        let loadingMessages = [
+            'Analyzing your request...',
+            'Consulting the compatibility database...',
+            'Finding the best product recommendation...',
+            'Finalizing your report...'
+        ];
+        let loadingMessageIndex = 0;
+        let loadingInterval = null;
+
+        // --- Functions ---
 
         // Function to load the affiliate products JSON file.
         async function getAffiliateProducts() {
@@ -186,12 +381,14 @@
 
                 Instructions:
                 1.  Analyze the compatibility between "Item A" and "Item B".
-                2.  Explain the potential compatibility issues or synergies in a clear, concise, and helpful manner.
-                3.  Based on the items and the compatibility analysis, find the most relevant product from the provided "Affiliate Products JSON" list that could solve a potential problem or enhance the user's experience.
-                4.  If a relevant product is found, return its "id".
-                5.  If no relevant product is found, return "null" for the "recommendedProductId".
-                6.  The response MUST be a JSON object with two fields: "analysis" (a markdown-formatted string with your analysis) and "recommendedProductId" (a string or null).
-                7.  Ensure the "analysis" is formatted using simple Markdown (headers, lists, bold text) for readability.
+                2.  Provide a clear, one-word compatibility status: "Compatible" or "Not Compatible".
+                3.  Write a very short summary (one sentence) explaining the outcome. If compatible, say "No issues found." or something similar and encouraging. If not compatible, briefly state the core issue.
+                4.  Provide a detailed description of the compatibility analysis, including technical details and why the items work or don't work together. This description should be formatted using simple Markdown.
+                5.  Based on the items and the detailed analysis, find the most relevant product from the provided "Affiliate Products JSON" list that could solve a potential problem or enhance the user's experience.
+                6.  If a relevant product is found, return its "id".
+                7.  If no relevant product is found, return "null" for the "recommendedProductId".
+                8.  The response MUST be a JSON object with four fields: "status" (string, either "Compatible" or "Not Compatible"), "summary" (string), "details" (string), and "recommendedProductId" (string or null).
+                9.  Ensure the "details" is formatted using simple Markdown (headers, lists, bold text) for readability.
             `;
 
             const payload = {
@@ -203,10 +400,12 @@
                     responseSchema: {
                         type: "OBJECT",
                         properties: {
-                            "analysis": { "type": "STRING" },
+                            "status": { "type": "STRING", "enum": ["Compatible", "Not Compatible"] },
+                            "summary": { "type": "STRING" },
+                            "details": { "type": "STRING" },
                             "recommendedProductId": { "type": "STRING" }
                         },
-                        "propertyOrdering": ["analysis", "recommendedProductId"]
+                        "propertyOrdering": ["status", "summary", "details", "recommendedProductId"]
                     }
                 }
             };
@@ -234,7 +433,7 @@
                         throw new Error('API response was empty or malformed.');
                     }
                     
-                    // --- FIX: Extract JSON from markdown code block if present ---
+                    // Extract JSON from markdown code block if present
                     let jsonText = result.content;
                     const jsonMatch = jsonText.match(/```json\n([\s\S]*?)\n```/);
                     if (jsonMatch && jsonMatch[1]) {
@@ -243,7 +442,7 @@
                         // Handle cases where the JSON is on a single line or has no extra newlines
                         jsonText = jsonText.substring(7, jsonText.length - 3).trim();
                     }
-
+                    
                     const apiResponse = JSON.parse(jsonText);
                     return apiResponse;
                 } catch (error) {
@@ -257,12 +456,61 @@
             }
         }
 
-        // Event listener for the "Analyze" button
+        // Function to display the correct page and update active navigation link
+        function showPage(pageId) {
+            homePage.classList.add('hidden');
+            howItWorksPage.classList.add('hidden');
+            aboutUsPage.classList.add('hidden');
+
+            document.getElementById(pageId).classList.remove('hidden');
+
+            document.querySelectorAll('.active-link').forEach(link => link.classList.remove('active-link'));
+            document.getElementById(`nav-${pageId.replace('-page', '')}`).classList.add('active-link');
+        }
+
+        // Function to handle clipboard copy
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    shareMessageDiv.textContent = "Link copied to clipboard!";
+                    shareMessageDiv.classList.remove('hidden');
+                    setTimeout(() => shareMessageDiv.classList.add('hidden'), 3000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            } else {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    shareMessageDiv.textContent = "Link copied to clipboard!";
+                    shareMessageDiv.classList.remove('hidden');
+                    setTimeout(() => shareMessageDiv.classList.add('hidden'), 3000);
+                } catch (err) {
+                    console.error('Fallback: Failed to copy text', err);
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // --- Event Listeners ---
+
+        // Listeners for page navigation
+        navHome.addEventListener('click', () => showPage('home-page'));
+        navHowItWorks.addEventListener('click', () => showPage('how-it-works-page'));
+        navAboutUs.addEventListener('click', () => showPage('about-us-page'));
+
+        // Listener for "Analyze" button
         analyzeBtn.addEventListener('click', async () => {
             const itemA = itemAInput.value.trim();
             const itemB = itemBInput.value.trim();
 
             // Clear previous results and errors
+            compatibilityStatus.textContent = '';
+            compatibilitySummary.textContent = '';
             analysisContentDiv.innerHTML = '';
             productName.textContent = '';
             productDescription.textContent = '';
@@ -271,6 +519,7 @@
             resultsDiv.classList.add('hidden');
             affiliateProductDiv.classList.add('hidden');
             errorBoxDiv.classList.add('hidden');
+            shareDiv.classList.add('hidden');
 
             // Validate inputs
             if (itemA === '' || itemB === '') {
@@ -283,6 +532,14 @@
             loadingDiv.classList.remove('hidden');
             analyzeBtn.disabled = true;
 
+            // Start cycling loading messages
+            loadingMessageIndex = 0;
+            loadingMessageSpan.textContent = loadingMessages[loadingMessageIndex];
+            loadingInterval = setInterval(() => {
+                loadingMessageIndex = (loadingMessageIndex + 1) % loadingMessages.length;
+                loadingMessageSpan.textContent = loadingMessages[loadingMessageIndex];
+            }, 3000);
+
             try {
                 // Fetch the affiliate products first
                 const affiliateProducts = await getAffiliateProducts();
@@ -290,8 +547,21 @@
                 // Call the API with the user's input and product data
                 const apiResponse = await getCompatibilityAnalysis(itemA, itemB, affiliateProducts);
 
-                // Format the analysis output with markdown for better readability
-                const formattedHtml = marked.parse(apiResponse.analysis);
+                // Update the compatibility status and summary
+                compatibilityStatus.textContent = apiResponse.status;
+                compatibilityStatus.className = 'text-2xl font-bold mb-2'; // Reset classes
+                compatibilitySummary.textContent = apiResponse.summary;
+
+                if (apiResponse.status === 'Compatible') {
+                    compatibilityStatus.classList.add('text-green-600');
+                    productRecommendationTitle.textContent = "Recommended Upgrade";
+                } else {
+                    compatibilityStatus.classList.add('text-red-600');
+                    productRecommendationTitle.textContent = "A Solution for You";
+                }
+                
+                // Format the detailed analysis output with markdown
+                const formattedHtml = marked.parse(apiResponse.details);
                 analysisContentDiv.innerHTML = formattedHtml;
 
                 let recommendedProduct = null;
@@ -302,10 +572,7 @@
 
                 // --- Fallback Recommendation Logic ---
                 if (!recommendedProduct) {
-                    // Keywords to search for in item names and compatibility tags
                     const searchKeywords = (itemA + ' ' + itemB).toLowerCase().split(' ').filter(word => word.length > 2);
-
-                    // Look for a product with matching compatibility tags
                     recommendedProduct = affiliateProducts.find(product =>
                         product.compatibility_tags.some(tag =>
                             searchKeywords.some(keyword => tag.toLowerCase().includes(keyword))
@@ -315,32 +582,96 @@
 
                 // --- Display the Product (if found) ---
                 if (recommendedProduct) {
-                    productRecommendationTitle.textContent = "Recommended Product";
                     productName.textContent = recommendedProduct.name;
                     productDescription.textContent = recommendedProduct.description;
                     productImage.src = recommendedProduct.image_url;
                     productImage.alt = recommendedProduct.name;
                     affiliateLink.href = recommendedProduct.affiliate_link;
-                    // Ensure image fallback works
                     productImage.onerror = () => {
                         productImage.src = `https://placehold.co/128x128/E2E8F0/1A202C?text=No+Image`;
                     };
                     affiliateProductDiv.classList.remove('hidden');
                 } else {
-                    // Hide the affiliate product section if no recommendation was made at all.
                     affiliateProductDiv.classList.add('hidden');
                 }
-
+                
                 resultsDiv.classList.remove('hidden');
+                shareDiv.classList.remove('hidden');
+
             } catch (error) {
                 errorMessageSpan.textContent = error.message;
                 errorBoxDiv.classList.remove('hidden');
             } finally {
-                // Hide loading and re-enable button
+                // Stop the loading messages and hide the loading animation
+                clearInterval(loadingInterval);
                 loadingDiv.classList.add('hidden');
                 analyzeBtn.disabled = false;
             }
         });
+
+        // Listeners for "Try It Out!" examples
+        document.querySelectorAll('.try-example').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const buttonText = e.target.textContent;
+                const matches = buttonText.match(/Try: (.*) & (.*)/);
+                if (matches && matches.length === 3) {
+                    itemAInput.value = matches[1].trim();
+                    itemBInput.value = matches[2].trim();
+                } else {
+                    itemAInput.value = e.target.dataset.itemA;
+                    itemBInput.value = e.target.dataset.itemB;
+                }
+                analyzeBtn.click(); // Trigger the analysis
+            });
+        });
+
+        // Listeners for social sharing buttons
+        document.getElementById('share-twitter').addEventListener('click', () => {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent(`Just checked the compatibility of "${itemAInput.value}" and "${itemBInput.value}" using Compatify! It works great!`);
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        });
+
+        document.getElementById('share-facebook').addEventListener('click', () => {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        });
+
+        document.getElementById('share-linkedin').addEventListener('click', () => {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent("Tech Compatibility Checker");
+            const summary = encodeURIComponent(`I used Compatify to check the compatibility of ${itemAInput.value} and ${itemBInput.value}!`);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank');
+        });
+        
+        document.getElementById('share-copy').addEventListener('click', () => {
+            copyToClipboard(window.location.href);
+        });
+
+        // Listeners for accordion functionality in the FAQ section
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const accordionContent = button.nextElementSibling;
+                const icon = button.querySelector('.accordion-icon');
+                
+                // Close other open accordions
+                document.querySelectorAll('.accordion-content.active').forEach(content => {
+                    if (content !== accordionContent) {
+                        content.classList.remove('active');
+                        content.previousElementSibling.querySelector('.accordion-icon').classList.remove('ph-minus');
+                        content.previousElementSibling.querySelector('.accordion-icon').classList.add('ph-plus');
+                    }
+                });
+
+                // Toggle the clicked accordion
+                accordionContent.classList.toggle('active');
+                icon.classList.toggle('ph-plus');
+                icon.classList.toggle('ph-minus');
+            });
+        });
+
+        // Initial page load state
+        showPage('home-page');
     </script>
 </body>
 </html>
