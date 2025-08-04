@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compatify</title>
+    <link rel="icon" href="https://placehold.co/16x16/000/fff?text=C" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,209 +12,177 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7fafc;
+            background-color: #f3f4f6;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
         }
-        .loading-animation {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            color: white;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .message-box.show {
+            display: block;
+            animation: fadeInOut 4s forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -20px); }
+            10% { opacity: 1; transform: translate(-50%, 0); }
+            90% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <div class="container mx-auto p-8 bg-white rounded-lg shadow-xl">
-        <h1 class="text-4xl font-bold text-center text-blue-600 mb-6">Compatify</h1>
-        <p class="text-center text-gray-600 mb-8">
-            Let's find out how compatible two things are.
-        </p>
+<body class="antialiased">
 
-        <!-- Input and Submit section -->
-        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-6">
-            <input type="text" id="itemA" placeholder="Enter the first item..."
-                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <input type="text" id="itemB" placeholder="Enter the second item..."
-                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="flex justify-center">
-            <button id="analyzeBtn"
-                    class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Analyze Compatibility
-            </button>
-        </div>
+    <!-- Message Box for alerts -->
+    <div id="message-box" class="message-box"></div>
 
-        <!-- Analysis Results section -->
-        <div id="results" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Compatibility Analysis</h2>
-            <div id="analysisContent">
-                <!-- Analysis content will be injected here -->
-            </div>
-            <div id="loading" class="flex justify-center items-center mt-4 hidden">
-                <div class="loading-animation"></div>
-                <span class="ml-3 text-gray-500">Analyzing...</span>
-            </div>
-        </div>
+    <div class="container mx-auto p-4 md:p-8 flex flex-col items-center">
 
-        <!-- Error Message Box -->
-        <div id="errorBox" class="mt-8 p-4 bg-red-100 text-red-700 border border-red-400 rounded-lg hidden">
-            <strong class="font-bold">Error:</strong>
-            <span id="errorMessage"></span>
-        </div>
-    </div>
+        <!-- Header and Logo -->
+        <header class="text-center mb-8">
+            <img src="https://placehold.co/200x50/3b82f6/ffffff?text=Compatify" onerror="this.onerror=null; this.src='https://placehold.co/200x50/3b82f6/ffffff?text=Compatify';" alt="Compatify Logo" class="mx-auto h-12 mb-4 rounded-lg">
+            <h1 class="text-4xl font-bold text-gray-800 tracking-tight">AI Compatibility Analysis</h1>
+            <p class="text-lg text-gray-600 mt-2">Find the best parts for your PC build.</p>
+        </header>
 
-    <!-- The core logic for the application -->
-    <script>
-        // Get references to DOM elements
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const itemAInput = document.getElementById('itemA');
-        const itemBInput = document.getElementById('itemB');
-        const resultsDiv = document.getElementById('results');
-        const analysisContentDiv = document.getElementById('analysisContent');
-        const loadingDiv = document.getElementById('loading');
-        const errorBoxDiv = document.getElementById('errorBox');
-        const errorMessageSpan = document.getElementById('errorMessage');
-
-        // Function to make API calls with exponential backoff for handling rate limits
-        async function exponentialBackoffFetch(url, options, retries = 3, delay = 1000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) {
-                        return response;
-                    } else if (response.status === 429 && i < retries - 1) {
-                        // Handle 429 Too Many Requests by retrying
-                        console.log(`Attempt ${i + 1} failed. Status: 429. Retrying in ${delay}ms...`);
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2; // Exponentially increase delay
-                    } else {
-                        throw new Error(`API response was not ok: Status ${response.status}`);
-                    }
-                } catch (error) {
-                    if (i < retries - 1) {
-                        console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms... Error: ${error.message}`);
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2;
-                    } else {
-                        throw error;
-                    }
-                }
-            }
-            throw new Error(`All ${retries} attempts to fetch from the API failed.`);
-        }
-
-        // Function to call the proxy API and get the compatibility analysis
-        async function getCompatibilityAnalysis(itemA, itemB) {
-            // The prompt for the Gemini API
-            const prompt = `Perform a detailed compatibility analysis between "${itemA}" and "${itemB}". Structure the response with a clear heading for "Overall Compatibility", followed by a list of "Key Points" and a final "Conclusion".`;
-            
-            // The payload for the Vercel serverless function
-            const payload = {
-                contents: [{
-                    parts: [{
-                        text: prompt
-                    }]
-                }]
-            };
-            
-            try {
-                const response = await exponentialBackoffFetch('/api/proxy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+        <main class="w-full bg-white rounded-xl shadow-lg p-6 md:p-8">
+            <div class="flex flex-col md:flex-row gap-6 md:gap-8">
                 
-                // Check if the response is valid JSON
-                if (response.headers.get('content-type')?.includes('application/json')) {
-                    const result = await response.json();
+                <!-- Input Section -->
+                <div class="flex-1">
+                    <label for="prompt-input" class="block text-gray-700 font-medium mb-2">PC Parts List</label>
+                    <textarea id="prompt-input" rows="10" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" placeholder="Enter your list of PC parts here (e.g., 'AMD Ryzen 5 5600X, NVIDIA GeForce RTX 3070, ...')"></textarea>
                     
-                    if (result && result.candidates && result.candidates.length > 0 && 
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        
-                        const analysisText = result.candidates[0].content.parts[0].text;
-                        return analysisText;
-                    } else {
-                        throw new Error('Unexpected API response structure.');
-                    }
-                } else {
-                    const errorText = await response.text();
-                    throw new Error(`API response error: ${errorText}`);
-                }
-            } catch (error) {
-                console.error("API Error:", error);
-                throw new Error(`API response error: ${error.message}`);
-            }
+                    <label for="api-key-input" class="block text-gray-700 font-medium mt-4 mb-2">Google AI Studio API Key</label>
+                    <input type="password" id="api-key-input" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" placeholder="Enter your API key">
+                    
+                    <button id="submit-button" class="mt-6 w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105 active:scale-100">
+                        Analyze Compatibility
+                    </button>
+                </div>
+                
+                <!-- Output Section -->
+                <div class="flex-1">
+                    <label for="output-area" class="block text-gray-700 font-medium mb-2">Analysis Results</label>
+                    <div id="output-area" class="w-full p-4 bg-gray-100 border border-gray-300 rounded-lg h-96 overflow-y-auto whitespace-pre-wrap">
+                        Your compatibility analysis will appear here.
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="mt-8 text-center text-gray-500 text-sm">
+            &copy; 2024 Compatify. All rights reserved.
+        </footer>
+    </div>
+    
+    <script>
+        // --- Helper Functions ---
+        
+        /**
+         * Shows a message box with a given message and style.
+         * @param {string} message - The message to display.
+         * @param {string} style - The Tailwind CSS classes for styling (e.g., 'bg-red-500' for error).
+         */
+        function showMessage(message, style) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.className = `message-box ${style} show`;
         }
 
-        // Event listener for the "Analyze" button
-        analyzeBtn.addEventListener('click', async () => {
-            const itemA = itemAInput.value.trim();
-            const itemB = itemBInput.value.trim();
+        /**
+         * A wrapper around fetch with exponential backoff for retries.
+         * @param {string} url - The URL to fetch.
+         * @param {object} options - The fetch options.
+         * @param {number} retries - The number of retries remaining.
+         * @returns {Promise<Response>} - The fetch response.
+         */
+        async function exponentialBackoffFetch(url, options, retries = 3) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error(`API response was not ok: Status ${response.status}`);
+                }
+                return response;
+            } catch (error) {
+                console.error(`Attempt ${4 - retries} failed. Retrying in ${1000 * Math.pow(2, 3 - retries)}ms...`, error);
+                if (retries === 0) {
+                    throw error;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, 3 - retries)));
+                return exponentialBackoffFetch(url, options, retries - 1);
+            }
+        }
+        
+        // --- Main Logic ---
 
-            // Clear previous results and errors
-            analysisContentDiv.innerHTML = '';
-            resultsDiv.classList.add('hidden');
-            errorBoxDiv.classList.add('hidden');
+        document.getElementById('submit-button').addEventListener('click', async () => {
+            const promptInput = document.getElementById('prompt-input');
+            const apiKeyInput = document.getElementById('api-key-input');
+            const outputArea = document.getElementById('output-area');
+            const submitButton = document.getElementById('submit-button');
 
-            // Validate inputs
-            if (itemA === '' || itemB === '') {
-                errorMessageSpan.textContent = "Please enter both items to analyze.";
-                errorBoxDiv.classList.remove('hidden');
+            const prompt = promptInput.value.trim();
+            const apiKey = apiKeyInput.value.trim();
+            const model = "gemini-1.5-flash-latest"; // Using the latest recommended model.
+
+            if (!prompt || !apiKey) {
+                showMessage('Please enter your PC parts list and API key.', 'bg-red-500');
                 return;
             }
 
-            // Show loading animation and disable button
-            loadingDiv.classList.remove('hidden');
-            analyzeBtn.disabled = true;
-
+            outputArea.textContent = 'Analyzing compatibility... Please wait.';
+            submitButton.disabled = true;
+            submitButton.textContent = 'Analyzing...';
+            
             try {
-                const analysis = await getCompatibilityAnalysis(itemA, itemB);
+                // Log the request payload before sending for debugging.
+                console.log('Sending request to proxy with payload:');
+                console.log({ apiKey, model, userPrompt: prompt });
                 
-                // Format the output with markdown for better readability
-                const formattedHtml = marked.parse(analysis);
-                analysisContentDiv.innerHTML = formattedHtml;
-                
-                resultsDiv.classList.remove('hidden');
+                const response = await exponentialBackoffFetch('/api/proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey,
+                        model: model,
+                        userPrompt: `Analyze the compatibility of the following PC parts and provide a detailed explanation of any potential issues or recommendations for a better build. If the parts are compatible, confirm this. Please respond in a clear, easy-to-read markdown format.
+                        
+                        PC Parts List:
+                        ${prompt}`
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                outputArea.textContent = data.content;
+                showMessage('Compatibility analysis complete!', 'bg-green-500');
+
             } catch (error) {
-                errorMessageSpan.textContent = error.message;
-                errorBoxDiv.classList.remove('hidden');
+                console.error('API Error:', error);
+                outputArea.textContent = `Error: ${error.message}. Please check your API key and try again.`;
+                showMessage('An error occurred. Please check the console for details.', 'bg-red-500');
             } finally {
-                // Hide loading and re-enable button
-                loadingDiv.classList.add('hidden');
-                analyzeBtn.disabled = false;
+                submitButton.disabled = false;
+                submitButton.textContent = 'Analyze Compatibility';
             }
         });
-
-        // Add a simple markdown parser for formatting the response.
-        // This is not a full-featured library, but it helps with basic formatting.
-        const marked = {
-            parse(text) {
-                let html = text;
-                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-                html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-                html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
-                html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
-                if (html.includes('<li>')) {
-                    html = '<ul>' + html + '</ul>';
-                }
-                html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
-                html = html.replace(/\*(.*)\*/gim, '<em>$1</em>');
-                html = html.replace(/_{2}(.*)_{2}/gim, '<strong>$1</strong>');
-                html = html.replace(/_(.*)_/gim, '<em>$1</em>');
-                return html;
-            }
-        };
-
     </script>
 </body>
 </html>
