@@ -125,6 +125,9 @@
                         await new Promise(resolve => setTimeout(resolve, delay));
                         delay *= 2; // Exponentially increase delay
                     } else {
+                        // The server responded with an error status (e.g., 400, 500)
+                        const errorText = await response.text();
+                        console.error('API response was not ok:', response.status, errorText);
                         throw new Error(`API response was not ok: Status ${response.status}`);
                     }
                 } catch (error) {
@@ -159,19 +162,12 @@
                     body: JSON.stringify(payload)
                 });
                 
-                if (response.headers.get('content-type')?.includes('application/json')) {
-                    const result = await response.json();
-                    if (result && result.candidates && result.candidates.length > 0 && 
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const analysisText = result.candidates[0].content.parts[0].text;
-                        return analysisText;
-                    } else {
-                        throw new Error('Unexpected API response structure.');
-                    }
+                const result = await response.json();
+                
+                if (result && result.content) {
+                    return result.content;
                 } else {
-                    const errorText = await response.text();
-                    throw new Error(`API response error: ${errorText}`);
+                    throw new Error('Unexpected API response structure.');
                 }
             } catch (error) {
                 console.error("API Error:", error);
