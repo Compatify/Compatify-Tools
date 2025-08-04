@@ -4,30 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compatify</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap)" rel="stylesheet">
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js](https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js)"></script>
+    <!-- Favicon using the uploaded logo -->
+    <link rel="icon" type="image/jpeg" href="http://googleusercontent.com/file_content/53">
+    <!-- Use Tailwind CSS for a professional, responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Use a simple Markdown parser to format the AI's analysis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7fafc;
+            background-color: #f1f5f9; /* Lighter background for a cleaner feel */
         }
-        .container {
-            max-width: 800px;
-        }
-        #results {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
+        /* Custom styles for the loading animation */
         .loading-animation {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #1d4ed8; /* Darker blue for contrast */
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 2rem;
+            height: 2rem;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -36,57 +35,87 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <!-- Main Container -->
-    <div class="container mx-auto p-8 bg-white rounded-lg shadow-xl">
-        <h1 class="text-4xl font-bold text-center text-blue-600 mb-6">Compatify</h1>
-        <p class="text-center text-gray-600 mb-8">
-            Let's find out how compatible two things are.
-        </p>
+    <!-- Main Application Container -->
+    <main class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-6 md:p-10">
 
-        <!-- Input and Submit section -->
-        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-6">
-            <input type="text" id="itemA" placeholder="Enter the first item..."
-                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <input type="text" id="itemB" placeholder="Enter the second item..."
-                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="flex justify-center">
-            <button id="analyzeBtn"
-                    class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Analyze Compatibility
-            </button>
-        </div>
+        <!-- Header Section with Logo -->
+        <header class="text-center mb-10">
+            <!-- Logo replaces the text heading -->
+            <img src="http://googleusercontent.com/file_content/53" alt="Compatify Logo" class="mx-auto w-24 mb-3">
+            <h1 class="text-lg text-gray-500 font-bold mb-3 tracking-tight">Compatify</h1>
+            <p class="text-lg text-gray-500">
+                Instantly check the compatibility of your favorite tech and accessories.
+            </p>
+        </header>
 
-        <!-- Analysis Results section -->
-        <div id="resultsDiv" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Compatibility Analysis</h2>
-            <div id="analysisContent" class="prose max-w-none">
-                <!-- Analysis content will be injected here -->
+        <!-- Input Form Section -->
+        <section class="mb-10">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <input type="text" id="itemA" placeholder="e.g., MacBook Pro M3"
+                       class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
+                <input type="text" id="itemB" placeholder="e.g., HDMI Cord"
+                       class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
             </div>
+            <div class="flex justify-center mt-6">
+                <button id="analyzeBtn"
+                        class="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200">
+                    Analyze Compatibility
+                </button>
+            </div>
+        </section>
 
-            <!-- Affiliate Product Section -->
-            <div id="affiliateProductDiv" class="mt-6 p-4 bg-white border border-gray-300 rounded-lg hidden">
-                <h3 id="productRecommendationTitle" class="text-xl font-bold text-gray-700 mb-2">Recommended Product</h3>
-                <div id="productDetails">
-                    <!-- Product details will be injected here -->
+        <!-- Results Section Container (Hidden by default) -->
+        <section id="resultsDiv" class="hidden">
+            <div class="space-y-8">
+                <!-- Compatibility Analysis Card -->
+                <div class="bg-blue-50 p-6 rounded-2xl shadow-inner border border-blue-200">
+                    <h2 class="text-3xl font-bold text-blue-900 mb-4 flex items-center">
+                        <svg class="w-8 h-8 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.618a8.001 8.001 0 010 11.236l-3.35 3.35a8.001 8.001 0 01-11.236 0l-3.35-3.35a8.001 8.001 0 010-11.236l3.35-3.35a8.001 8.001 0 0111.236 0l3.35 3.35z"></path>
+                        </svg>
+                        Compatibility Analysis
+                    </h2>
+                    <div id="analysisContent" class="prose max-w-none text-gray-700 leading-relaxed">
+                        <!-- Analysis content will be injected here as formatted Markdown -->
+                    </div>
+                </div>
+
+                <!-- Affiliate Product Card (Hidden by default) -->
+                <div id="affiliateProductDiv" class="hidden bg-white p-6 rounded-2xl shadow-xl border border-gray-200 transform transition-transform duration-300 hover:scale-[1.01]">
+                    <div class="flex flex-col sm:flex-row items-center gap-6">
+                        <div class="w-full sm:w-auto flex-shrink-0">
+                            <img id="productImage" src="https://placehold.co/128x128/E2E8F0/1A202C?text=No+Image" alt="Recommended Product"
+                                 class="w-32 h-32 object-contain rounded-xl border border-gray-200 p-2 transition-transform duration-200 hover:scale-105">
+                        </div>
+                        <div class="flex-1 text-center sm:text-left">
+                            <h3 id="productRecommendationTitle" class="text-2xl font-bold text-gray-900 mb-1">Recommended Product</h3>
+                            <h4 id="productName" class="text-lg font-semibold text-gray-800">Product Name Placeholder</h4>
+                            <p id="productDescription" class="text-gray-500 mt-2 text-sm leading-relaxed">Product description will appear here.</p>
+                            <a id="affiliateLink" href="#" target="_blank" rel="noopener noreferrer"
+                               class="mt-4 inline-block bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200">
+                                View on Amazon
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Loading Indicator -->
-        <div id="loading" class="flex justify-center items-center mt-4 hidden">
+        <div id="loading" class="flex flex-col items-center justify-center mt-8 space-y-3 hidden">
             <div class="loading-animation"></div>
-            <span class="ml-3 text-gray-500">Analyzing...</span>
+            <span class="text-lg text-gray-600 font-medium">Analyzing compatibility...</span>
         </div>
 
         <!-- Error Message Box -->
-        <div id="errorBox" class="mt-8 p-4 bg-red-100 text-red-700 border border-red-400 rounded-lg hidden">
-            <strong class="font-bold">Error:</strong>
+        <div id="errorBox" class="mt-8 p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl shadow-sm hidden">
+            <strong class="font-semibold">Oh no! An error occurred:</strong>
             <span id="errorMessage"></span>
         </div>
-    </div>
+
+    </main>
 
     <!-- The core logic for the application -->
     <script>
@@ -95,13 +124,13 @@
             parse(text) {
                 let html = text;
                 // Headers
-                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-                html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                html = html.replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold mt-4 mb-2">$1</h3>');
+                html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-6 mb-3">$1</h2>');
+                html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>');
                 // Unordered lists
-                html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
+                html = html.replace(/^\* (.*$)/gim, '<li class="list-disc ml-6">$1</li>');
                 if (html.includes('<li>')) {
-                    html = `<ul>${html}</ul>`;
+                    html = `<ul class="list-inside">${html}</ul>`;
                 }
                 // Bold and Italic
                 html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
@@ -119,8 +148,11 @@
         const resultsDiv = document.getElementById('resultsDiv');
         const analysisContentDiv = document.getElementById('analysisContent');
         const affiliateProductDiv = document.getElementById('affiliateProductDiv');
-        const productDetailsDiv = document.getElementById('productDetails');
         const productRecommendationTitle = document.getElementById('productRecommendationTitle');
+        const productName = document.getElementById('productName');
+        const productDescription = document.getElementById('productDescription');
+        const productImage = document.getElementById('productImage');
+        const affiliateLink = document.getElementById('affiliateLink');
         const loadingDiv = document.getElementById('loading');
         const errorBoxDiv = document.getElementById('errorBox');
         const errorMessageSpan = document.getElementById('errorMessage');
@@ -225,14 +257,17 @@
             }
         }
 
-        // Add event listener to the button
+        // Event listener for the "Analyze" button
         analyzeBtn.addEventListener('click', async () => {
             const itemA = itemAInput.value.trim();
             const itemB = itemBInput.value.trim();
 
             // Clear previous results and errors
             analysisContentDiv.innerHTML = '';
-            productDetailsDiv.innerHTML = '';
+            productName.textContent = '';
+            productDescription.textContent = '';
+            productImage.src = 'https://placehold.co/128x128/E2E8F0/1A202C?text=No+Image';
+            affiliateLink.href = '#';
             resultsDiv.classList.add('hidden');
             affiliateProductDiv.classList.add('hidden');
             errorBoxDiv.classList.add('hidden');
@@ -263,7 +298,6 @@
                 // --- Primary Recommendation Logic (from API) ---
                 if (apiResponse.recommendedProductId && apiResponse.recommendedProductId !== "null") {
                     recommendedProduct = affiliateProducts.find(p => p.id === apiResponse.recommendedProductId);
-                    productRecommendationTitle.textContent = "Recommended Product";
                 }
 
                 // --- Fallback Recommendation Logic ---
@@ -277,30 +311,20 @@
                             searchKeywords.some(keyword => tag.toLowerCase().includes(keyword))
                         )
                     );
-
-                    if (recommendedProduct) {
-                        productRecommendationTitle.textContent = "Related Product Recommendation";
-                    }
                 }
 
                 // --- Display the Product (if found) ---
                 if (recommendedProduct) {
-                    // Build the HTML for the product
-                    productDetailsDiv.innerHTML = `
-                        <div class="flex items-center space-x-4">
-                            <img src="${recommendedProduct.image_url}" alt="${recommendedProduct.name}"
-                                 class="w-20 h-20 object-contain rounded-lg border border-gray-200"
-                                 onerror="this.onerror=null;this.src='[https://placehold.co/80x80/E2E8F0/1A202C?text=No+Image](https://placehold.co/80x80/E2E8F0/1A202C?text=No+Image)';">
-                            <div class="flex-1">
-                                <h4 class="text-md font-semibold text-gray-800">${recommendedProduct.name}</h4>
-                                <p class="text-sm text-gray-600 mt-1">${recommendedProduct.description}</p>
-                                <a href="${recommendedProduct.affiliate_link}" target="_blank" rel="noopener noreferrer"
-                                   class="mt-3 inline-block bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition-colors duration-200">
-                                   View on Amazon
-                                </a>
-                            </div>
-                        </div>
-                    `;
+                    productRecommendationTitle.textContent = "Recommended Product";
+                    productName.textContent = recommendedProduct.name;
+                    productDescription.textContent = recommendedProduct.description;
+                    productImage.src = recommendedProduct.image_url;
+                    productImage.alt = recommendedProduct.name;
+                    affiliateLink.href = recommendedProduct.affiliate_link;
+                    // Ensure image fallback works
+                    productImage.onerror = () => {
+                        productImage.src = `https://placehold.co/128x128/E2E8F0/1A202C?text=No+Image`;
+                    };
                     affiliateProductDiv.classList.remove('hidden');
                 } else {
                     // Hide the affiliate product section if no recommendation was made at all.
