@@ -1,83 +1,70 @@
-// This file acts as a serverless function proxy for the Gemini API.
-// It is designed to be deployed on platforms like Vercel.
+// A Vercel serverless function to proxy requests to the Google AI Studio API.
+// This allows you to securely use your API key via Vercel's environment variables.
 
-// Import the GoogleGenerativeAI library. This is a Node.js library.
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// The API endpoint for the Gemini-1.5-flash model
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
-/**
- * The main handler for the Vercel serverless function.
- * @param {import('http').IncomingMessage} req - The incoming HTTP request.
- * @param {import('http').ServerResponse} res - The HTTP response object.
- */
-export default async function handler(req, res) {
-  try {
-    // Log the start of the request for debugging purposes.
-    console.log('--- New Request ---');
-    console.log('Received request method:', req.method);
+// The API key is securely stored as an environment variable in Vercel.
+// It is accessed via process.env.VITE_API_KEY
+const apiKey = process.env.VITE_API_KEY;
 
-    // Vercel serverless functions use an Express-like req/res object.
-    // Check if the request is a POST request, as this function is designed for POST.
-    if (req.method !== 'POST') {
-      res.status(405).json({ error: 'Method Not Allowed' });
-      return;
+// This is the main function that handles incoming requests.
+export default async function handler(request, response) {
+    // Only allow POST requests to this endpoint.
+    if (request.method !== 'POST') {
+        return response.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 
-    // *** FIX FOR `TypeError: request.headers.get is not a function` ***
-    // In Node.js, the `headers` object is a plain object, not a browser `Headers` object.
-    // We must use bracket notation to access the headers, and they are typically lowercase.
-    const contentType = req.headers['content-type'];
-    console.log('Received Content-Type:', contentType);
+    try {
+        // Parse the request body to get the 'contents' field.
+        // This payload format is what the Gemini API expects.
+        const { contents } = await request.json();
 
-    // Validate the Content-Type header to ensure the request body is JSON.
-    if (!contentType || !contentType.includes('application/json')) {
-      res.status(400).json({ error: 'Invalid Content-Type. Expected application/json' });
-      return;
-    }
+        // Check if the Vercel environment variable for the API key is set.
+        if (!apiKey) {
+            return response.status(500).json({ error: 'API key is not configured. Please set the VITE_API_KEY environment variable in Vercel.' });
+        }
+        
+        // Ensure the 'contents' field is present and correctly structured.
+        if (!contents || !Array.isArray(contents) || contents.length === 0 || !contents[0].parts || !contents[0].parts[0].text) {
+             return response.status(400).json({ error: 'Request body must contain a valid "contents" field with a text part.' });
+        }
 
-    // In a Vercel Node.js function, you need to read the request body from a stream.
-    let body = '';
-    for await (const chunk of req) {
-      body += chunk;
-    }
+        // Construct the full API URL with the API key.
+        const apiUrl = `${GEMINI_API_URL}?key=${apiKey}`;
 
-    // Parse the JSON body.
-    const requestData = JSON.parse(body);
-    console.log('Received requestData:', requestData);
+        // Prepare the payload for the Gemini API.
+        const payload = {
+            contents: contents
+        };
 
-    // Extract the required parameters from the request body.
-    const { apiKey, model, userPrompt } = requestData;
-
-    // Validate that the required parameters are present.
-    if (!apiKey || !model || !userPrompt) {
-      res.status(400).json({ error: 'Missing required parameters: apiKey, model, or userPrompt' });
-      return;
-    }
-
-    // Initialize the Google Generative AI client with the provided API key.
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const apiModel = genAI.getGenerativeModel({ model: model });
-
-    // Make the API call to generate content.
-    const result = await apiModel.generateContent(userPrompt);
-    const responseText = result.response.text();
-    console.log('API call successful. Response text:', responseText);
-
-    // Send the API response back to the client.
-    res.status(200).json({ content: responseText });
-
-  } catch (error) {
-    // Log any errors that occur during the process.
-    console.error('An error occurred during the API call:', error);
-
-    // Handle potential API errors with specific status codes if possible.
-    if (error.response && error.response.status) {
-        res.status(error.response.status).json({
-            error: 'API call failed with status ' + error.response.status,
-            details: error.response.data
+        // Forward the request to the Gemini API.
+        const geminiResponse = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
         });
-    } else {
-        // Fallback for unexpected errors.
-        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+
+        // Check for a successful response from the Gemini API.
+        if (!geminiResponse.ok) {
+            const errorText = await geminiResponse.text();
+            console.error('Gemini API Error:', geminiResponse.status, errorText);
+            return response.status(geminiResponse.status).json({ error: `Gemini API responded with an error: ${geminiResponse.statusText}` });
+        }
+
+        // Parse the response from the Gemini API.
+        const result = await geminiResponse.json();
+        
+        // Extract the generated text from the response.
+        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || 'No content found.';
+
+        // Send the generated text back to the client in a simple format.
+        response.status(200).json({ content: text });
+
+    } catch (error) {
+        console.error('Proxy Error:', error);
+        response.status(500).json({ error: 'An internal server error occurred.' });
     }
-  }
 }
