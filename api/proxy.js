@@ -1,80 +1,83 @@
-// Note: Vercel's Node.js environment includes a native `fetch` API,
-// so there is no need to import `node-fetch`.
-// This change is the most likely fix for the 500 Internal Server Error.
+// This file acts as a serverless function proxy for the Gemini API.
+// It is designed to be deployed on platforms like Vercel.
 
-export default async function handler(request, response) {
-  console.log('--- New Request ---');
-  console.log(`Received request method: ${request.method}`);
+// Import the GoogleGenerativeAI library. This is a Node.js library.
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-  // Ensure request method is POST
-  if (request.method !== 'POST') {
-    console.error('Method Not Allowed: Received a non-POST request.');
-    return response.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  // Ensure a valid content-type
-  const contentType = request.headers.get('content-type');
-  if (!contentType || !contentType.includes('application/json')) {
-    console.error('Bad Request: Invalid or missing Content-Type header.');
-    return response.status(400).json({ error: 'Bad Request: Content-Type must be application/json' });
-  }
-
-  let prompt;
+/**
+ * The main handler for the Vercel serverless function.
+ * @param {import('http').IncomingMessage} req - The incoming HTTP request.
+ * @param {import('http').ServerResponse} res - The HTTP response object.
+ */
+export default async function handler(req, res) {
   try {
-    const body = await request.json();
-    prompt = body.prompt;
-    if (!prompt) {
-      console.error('Bad Request: Missing "prompt" field in request body.');
-      return response.status(400).json({ error: 'Missing prompt in request body' });
-    }
-    console.log('Successfully parsed request body. Prompt received.');
-  } catch (parseError) {
-    console.error('Bad Request: Failed to parse JSON body.', parseError);
-    return response.status(400).json({ error: 'Bad Request: Invalid JSON body' });
-  }
+    // Log the start of the request for debugging purposes.
+    console.log('--- New Request ---');
+    console.log('Received request method:', req.method);
 
-  // Use the correct environment variable name
-  const API_KEY = process.env.VITE_API_KEY;
-  if (!API_KEY) {
-    console.error('Internal Server Error: VITE_API_KEY environment variable is not set.');
-    return response.status(500).json({ error: 'API key is not configured on the server.' });
-  }
-  console.log('Successfully retrieved VITE_API_KEY from environment variables.');
-
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
-
-  try {
-    console.log('Attempting to fetch from Gemini API...');
-    const geminiResponse = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }]
-      })
-    });
-
-    console.log(`Gemini API Response Status: ${geminiResponse.status}`);
-
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      console.error(`Error from Gemini API: Status ${geminiResponse.status}. Body: ${errorText}`);
-      return response.status(geminiResponse.status).json({
-        error: `Gemini API responded with an error.`,
-        details: errorText
-      });
+    // Vercel serverless functions use an Express-like req/res object.
+    // Check if the request is a POST request, as this function is designed for POST.
+    if (req.method !== 'POST') {
+      res.status(405).json({ error: 'Method Not Allowed' });
+      return;
     }
 
-    const data = await geminiResponse.json();
-    response.status(200).json(data);
-    console.log('Successfully proxied response from Gemini API. End of request.');
+    // *** FIX FOR `TypeError: request.headers.get is not a function` ***
+    // In Node.js, the `headers` object is a plain object, not a browser `Headers` object.
+    // We must use bracket notation to access the headers, and they are typically lowercase.
+    const contentType = req.headers['content-type'];
+    console.log('Received Content-Type:', contentType);
+
+    // Validate the Content-Type header to ensure the request body is JSON.
+    if (!contentType || !contentType.includes('application/json')) {
+      res.status(400).json({ error: 'Invalid Content-Type. Expected application/json' });
+      return;
+    }
+
+    // In a Vercel Node.js function, you need to read the request body from a stream.
+    let body = '';
+    for await (const chunk of req) {
+      body += chunk;
+    }
+
+    // Parse the JSON body.
+    const requestData = JSON.parse(body);
+    console.log('Received requestData:', requestData);
+
+    // Extract the required parameters from the request body.
+    const { apiKey, model, userPrompt } = requestData;
+
+    // Validate that the required parameters are present.
+    if (!apiKey || !model || !userPrompt) {
+      res.status(400).json({ error: 'Missing required parameters: apiKey, model, or userPrompt' });
+      return;
+    }
+
+    // Initialize the Google Generative AI client with the provided API key.
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const apiModel = genAI.getGenerativeModel({ model: model });
+
+    // Make the API call to generate content.
+    const result = await apiModel.generateContent(userPrompt);
+    const responseText = result.response.text();
+    console.log('API call successful. Response text:', responseText);
+
+    // Send the API response back to the client.
+    res.status(200).json({ content: responseText });
+
   } catch (error) {
-    console.error('Unhandled error during API proxy:', error);
-    response.status(500).json({ error: 'Failed to get a response from Gemini API', details: error.message });
+    // Log any errors that occur during the process.
+    console.error('An error occurred during the API call:', error);
+
+    // Handle potential API errors with specific status codes if possible.
+    if (error.response && error.response.status) {
+        res.status(error.response.status).json({
+            error: 'API call failed with status ' + error.response.status,
+            details: error.response.data
+        });
+    } else {
+        // Fallback for unexpected errors.
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
   }
 }
