@@ -102,7 +102,7 @@
 
             <!-- Header Section with Logo -->
             <header class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl text-gray-900 font-bold mb-3 tracking-tight">Tech Compatibility, Instantly.</h1>
+                <h1 class="text-3xl md:text-4xl text-gray-900 font-bold mb-3 tracking-tight">Check Compatibility, Instantly.</h1>
                 <p class="text-lg text-gray-500">
                     Enter any two tech items and let our AI engine check their compatibility.
                 </p>
@@ -111,15 +111,15 @@
             <!-- Input Form Section -->
             <section class="mb-6">
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="text" id="itemA" placeholder="e.g., MacBook Pro M3"
+                    <input type="text" id="itemA" placeholder="e.g., MacBook Pro"
                            class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
-                    <input type="text" id="itemB" placeholder="e.g., USB-C Hub"
+                    <input type="text" id="itemB" placeholder="e.g., HDMI Cord"
                            class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
                 </div>
                 <div class="flex justify-center mt-6">
                     <button id="analyzeBtn"
                             class="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200">
-                        Analyze Compatibility
+                        Run Check
                     </button>
                 </div>
             </section>
@@ -496,15 +496,8 @@
             }
         }
 
-        // --- Event Listeners ---
-
-        // Listeners for page navigation
-        navHome.addEventListener('click', () => showPage('home-page'));
-        navHowItWorks.addEventListener('click', () => showPage('how-it-works-page'));
-        navAboutUs.addEventListener('click', () => showPage('about-us-page'));
-
-        // Listener for "Analyze" button
-        analyzeBtn.addEventListener('click', async () => {
+        // --- Core Logic for Compatibility Check ---
+        const runCompatibilityCheck = async () => {
             const itemA = itemAInput.value.trim();
             const itemB = itemBInput.value.trim();
 
@@ -521,10 +514,20 @@
             errorBoxDiv.classList.add('hidden');
             shareDiv.classList.add('hidden');
 
-            // Validate inputs
-            if (itemA === '' || itemB === '') {
-                errorMessageSpan.textContent = "Please enter both items to analyze.";
+            // --- Updated Validation Logic ---
+            if (itemA === '' && itemB === '') {
+                errorMessageSpan.textContent = "You need at least two devices to run a check.";
                 errorBoxDiv.classList.remove('hidden');
+                return;
+            } else if (itemA === '') {
+                errorMessageSpan.textContent = "Please enter the first item.";
+                errorBoxDiv.classList.remove('hidden');
+                itemAInput.focus();
+                return;
+            } else if (itemB === '') {
+                errorMessageSpan.textContent = "Please enter the second item.";
+                errorBoxDiv.classList.remove('hidden');
+                itemBInput.focus();
                 return;
             }
 
@@ -607,6 +610,29 @@
                 loadingDiv.classList.add('hidden');
                 analyzeBtn.disabled = false;
             }
+        };
+
+        // --- Event Listeners ---
+
+        // Listeners for page navigation
+        navHome.addEventListener('click', () => showPage('home-page'));
+        navHowItWorks.addEventListener('click', () => showPage('how-it-works-page'));
+        navAboutUs.addEventListener('click', () => showPage('about-us-page'));
+
+        // Listener for "Run Check" button
+        analyzeBtn.addEventListener('click', runCompatibilityCheck);
+
+        // Event listener for the "Enter" key on the input fields
+        itemAInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runCompatibilityCheck();
+            }
+        });
+        
+        itemBInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runCompatibilityCheck();
+            }
         });
 
         // Listeners for "Try It Out!" examples
@@ -621,7 +647,7 @@
                     itemAInput.value = e.target.dataset.itemA;
                     itemBInput.value = e.target.dataset.itemB;
                 }
-                analyzeBtn.click(); // Trigger the analysis
+                runCompatibilityCheck(); // Trigger the analysis
             });
         });
 
@@ -675,3 +701,4 @@
     </script>
 </body>
 </html>
+
