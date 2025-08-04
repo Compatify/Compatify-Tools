@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compatify</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap)" rel="stylesheet">
+    <script src="[https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js](https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js)"></script>
 
     <style>
         body {
@@ -65,7 +65,7 @@
             <div id="analysisContent" class="prose max-w-none">
                 <!-- Analysis content will be injected here -->
             </div>
-            
+
             <!-- Affiliate Product Section -->
             <div id="affiliateProductDiv" class="mt-6 p-4 bg-white border border-gray-300 rounded-lg hidden">
                 <h3 id="productRecommendationTitle" class="text-xl font-bold text-gray-700 mb-2">Recommended Product</h3>
@@ -74,7 +74,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Loading Indicator -->
         <div id="loading" class="flex justify-center items-center mt-4 hidden">
             <div class="loading-animation"></div>
@@ -178,7 +178,7 @@
                     }
                 }
             };
-            
+
             let attempts = 0;
             const maxRetries = 3;
             const baseDelay = 1000;
@@ -202,8 +202,17 @@
                         throw new Error('API response was empty or malformed.');
                     }
                     
-                    // The proxy returns a JSON object where the API response is in the 'content' field.
-                    const apiResponse = JSON.parse(result.content);
+                    // --- FIX: Extract JSON from markdown code block if present ---
+                    let jsonText = result.content;
+                    const jsonMatch = jsonText.match(/```json\n([\s\S]*?)\n```/);
+                    if (jsonMatch && jsonMatch[1]) {
+                        jsonText = jsonMatch[1].trim();
+                    } else if (jsonText.startsWith('```json') && jsonText.endsWith('```')) {
+                        // Handle cases where the JSON is on a single line or has no extra newlines
+                        jsonText = jsonText.substring(7, jsonText.length - 3).trim();
+                    }
+
+                    const apiResponse = JSON.parse(jsonText);
                     return apiResponse;
                 } catch (error) {
                     attempts++;
@@ -245,7 +254,7 @@
 
                 // Call the API with the user's input and product data
                 const apiResponse = await getCompatibilityAnalysis(itemA, itemB, affiliateProducts);
-                
+
                 // Format the analysis output with markdown for better readability
                 const formattedHtml = marked.parse(apiResponse.analysis);
                 analysisContentDiv.innerHTML = formattedHtml;
@@ -261,10 +270,10 @@
                 if (!recommendedProduct) {
                     // Keywords to search for in item names and compatibility tags
                     const searchKeywords = (itemA + ' ' + itemB).toLowerCase().split(' ').filter(word => word.length > 2);
-                    
+
                     // Look for a product with matching compatibility tags
-                    recommendedProduct = affiliateProducts.find(product => 
-                        product.compatibility_tags.some(tag => 
+                    recommendedProduct = affiliateProducts.find(product =>
+                        product.compatibility_tags.some(tag =>
                             searchKeywords.some(keyword => tag.toLowerCase().includes(keyword))
                         )
                     );
@@ -281,7 +290,7 @@
                         <div class="flex items-center space-x-4">
                             <img src="${recommendedProduct.image_url}" alt="${recommendedProduct.name}"
                                  class="w-20 h-20 object-contain rounded-lg border border-gray-200"
-                                 onerror="this.onerror=null;this.src='https://placehold.co/80x80/E2E8F0/1A202C?text=No+Image';">
+                                 onerror="this.onerror=null;this.src='[https://placehold.co/80x80/E2E8F0/1A202C?text=No+Image](https://placehold.co/80x80/E2E8F0/1A202C?text=No+Image)';">
                             <div class="flex-1">
                                 <h4 class="text-md font-semibold text-gray-800">${recommendedProduct.name}</h4>
                                 <p class="text-sm text-gray-600 mt-1">${recommendedProduct.description}</p>
@@ -297,7 +306,7 @@
                     // Hide the affiliate product section if no recommendation was made at all.
                     affiliateProductDiv.classList.add('hidden');
                 }
-                
+
                 resultsDiv.classList.remove('hidden');
             } catch (error) {
                 errorMessageSpan.textContent = error.message;
