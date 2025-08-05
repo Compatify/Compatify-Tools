@@ -12,8 +12,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Use Phosphor Icons for a clean set of icons for social sharing -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/dist/phosphor.js"></script>
     <!-- Use a simple Markdown parser to format the AI's analysis -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
 
@@ -84,6 +82,7 @@
                         <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                     <span class="ml-2 text-2xl font-bold text-gray-900">Compatify</span>
+                    <span class="ml-1 text-sm text-blue-500 font-semibold">Tools</span>
                 </div>
                 <!-- Navigation Links -->
                 <div class="flex space-x-8">
@@ -102,23 +101,27 @@
 
             <!-- Header Section with Logo -->
             <header class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl text-gray-900 font-bold mb-3 tracking-tight">Check Compatibility, Instantly.</h1>
-                <p class="text-lg text-gray-500">
-                    Enter any two tech items and let our AI engine check their compatibility.
-                </p>
+                <h1 class="text-3xl md:text-4xl text-gray-900 font-bold mb-3 tracking-tight">Stop Guessing. Start Connecting.</h1>
+                <p class="text-lg text-gray-500">Check any devices, cables, or accessories for compatibility and get product suggestions that actually work</p>
             </header>
 
             <!-- Input Form Section -->
             <section class="mb-6">
-                <div class="flex flex-col sm:flex-row gap-4">
+                <!-- Container for dynamic input fields and the add button -->
+                <div id="input-container" class="flex flex-col sm:flex-row gap-4 flex-wrap items-center">
                     <input type="text" id="itemA" placeholder="e.g., MacBook Pro"
                            class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
                     <input type="text" id="itemB" placeholder="e.g., HDMI Cord"
                            class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700">
+                    <!-- Plus sign button to add new input fields -->
+                    <button id="addDeviceBtn" title="Add another device"
+                            class="p-4 bg-blue-100 text-blue-600 rounded-xl shadow-lg hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" class="w-6 h-6"><path fill="currentColor" d="M228 128a12 12 0 0 1-12 12h-80v80a12 12 0 0 1-24 0v-80H40a12 12 0 0 1 0-24h80V40a12 12 0 0 1 24 0v80h80a12 12 0 0 1 12 12Z"/></svg>
+                    </button>
                 </div>
                 <div class="flex justify-center mt-6">
                     <button id="analyzeBtn"
-                            class="w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200">
+                            class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white font-bold text-xl rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200">
                         Run Check
                     </button>
                 </div>
@@ -142,7 +145,7 @@
                     <!-- Compatibility Analysis Card -->
                     <div class="bg-blue-50 p-6 rounded-2xl shadow-inner border border-blue-200">
                         <h2 class="text-3xl font-bold text-blue-900 mb-4 flex items-center">
-                            <i class="ph-bold ph-check-circle text-blue-600 text-3xl mr-2"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-blue-600 mr-2 w-8 h-8" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m46.12 73.88a12 12 0 0 1-17 17l-35.12-35.13a12 12 0 0 1 17-17Zm-52 64a12 12 0 0 1-17 17L87 142.06a12 12 0 0 1 17-17l12.12 12.12a12 12 0 0 1-2.12 17l-10.12 10.13Z"/></svg>
                             Compatibility Analysis
                         </h2>
                         
@@ -183,16 +186,16 @@
                         <h3 class="text-xl font-bold text-gray-800 mb-4">Share Your Analysis</h3>
                         <div class="flex space-x-4">
                             <button id="share-twitter" class="share-button p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-md">
-                                <i class="ph-bold ph-twitter-logo text-xl"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 256 256"><path fill="currentColor" d="M245.74 81.33c-2.45 1.09-13.43 5.43-16.14 6.77c-3.15 1.54-6.43 2.82-9.61 3.91c-1.39-2.09-2.82-4.14-4.22-6.2c-5.87-8.32-15.82-14.28-27.42-15.65c-15-1.74-29.35 6.45-36 19.34a66.86 66.86 0 0 0-.25 2.13c-2.9 22.81-22.18 43.14-49.88 43.14c-12.75 0-24.58-4.84-33.8-12.87c2.25.13 4.49.2 6.73.2c16.32 0 31.57-5.58 43.58-15.11a68.61 68.61 0 0 1-28.7-2.61a68 68 0 0 1-23-11.45c4.76.92 9.53 1.38 14.28 1.38c5.44 0 10.74-.75 15.68-2.22c-2.62-.06-5.18-.32-7.66-.8c-1.68-.34-3.32-.73-4.86-1.22a68.14 68.14 0 0 1-24.7-10c-17.75-10.9-27.18-31-23.77-50.62c.76 1.36 1.57 2.76 2.41 4.14a48 48 0 0 0 38.31 16.92c-6.84-2.89-13-7.5-17.81-13.88c-1.84-2.46-3.48-5-4.88-7.58A68.32 68.32 0 0 1 42 75.32c-1.68-1.57-3.31-3.23-4.9-5a67.14 67.14 0 0 0 25.12 21.65c-20.73-1.62-37-18.42-37-38.92a68.11 68.11 0 0 1 1.77-17.58a68.13 68.13 0 0 0 45.47 22.56c-1.68-11.75 2.87-23.63 12.3-30.82a66.19 66.19 0 0 1 20.8-9c1.47-.38 2.92-.81 4.34-1.29A68.21 68.21 0 0 1 128 44.82c18.57 0 35.15-8.49 46.54-21.7a69.83 69.83 0 0 1 21.84-25.29c1.43 5.43 2.15 10.92 2.15 16.58a68.18 68.18 0 0 1-4.82 25.66c-5.26 13.91-16.14 24.36-29.35 29.56c12.28-1.61 24.41-6.19 35.48-13.84c1.13-1.07 2.21-2.18 3.23-3.31c-.34-.14-.6-.28-.85-.43c1.65-.67 3.26-1.42 4.86-2.22c1.78-.9 3.51-1.84 5.16-2.82c-1.74-1.06-3.49-2.14-5.22-3.26c-1.66-1.09-3.29-2.23-4.89-3.41c-2.09-1.58-4.14-3.19-6.17-4.83a66.1 66.1 0 0 1-9-8.49c12.35 1.58 24.56 5.86 35.48 12.87a68.78 68.78 0 0 1-13.43 14.15c.61 1.07 1.25 2.15 1.9 3.23c2.72 4.7 5.21 9.54 7.47 14.53Z"/></svg>
                             </button>
                             <button id="share-facebook" class="share-button p-3 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition-colors shadow-md">
-                                <i class="ph-bold ph-facebook-logo text-xl"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m36 67.24h-12a12 12 0 0 0-12 12v12h24a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4h-24v52a4 4 0 0 1-4 4h-16a4 4 0 0 1-4-4v-52h-20a4 4 0 0 1-4-4v-16a4 4 0 0 1 4-4h20v-12a28 28 0 0 1 28-28h12a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4"/></svg>
                             </button>
                             <button id="share-linkedin" class="share-button p-3 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors shadow-md">
-                                <i class="ph-bold ph-linkedin-logo text-xl"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m52 144a4 4 0 0 1-4 4h-28a4 4 0 0 1-4-4v-28a20 20 0 0 0-20-20c-15.15 0-19.14 10.66-19.14 20v28a4 4 0 0 1-4 4H84a4 4 0 0 1-4-4V96a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v7.71h.23A25.86 25.86 0 0 1 132 92c23.83 0 28 15 28 36v40a4 4 0 0 1-4 4ZM72 96V72a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v24a4 4 0 0 1-4 4H76a4 4 0 0 1-4-4Zm12 24a12 12 0 1 1-12-12a12 12 0 0 1 12 12Z"/></svg>
                             </button>
                             <button id="share-copy" class="share-button p-3 bg-gray-300 text-gray-800 rounded-full hover:bg-gray-400 transition-colors shadow-md">
-                                <i class="ph-bold ph-link text-xl"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m52 108a4 4 0 0 1-4 4H84a4 4 0 0 1-4-4a4 4 0 0 1 4-4h92a4 4 0 0 1 4 4Zm-16 44a4 4 0 0 1-4 4h-60a4 4 0 0 1 0-8h60a4 4 0 0 1 4 4Zm12-88a4 4 0 0 1-4 4h-84a4 4 0 0 1 0-8h84a4 4 0 0 1 4 4Zm-16-16a4 4 0 0 1-4 4h-60a4 4 0 0 1 0-8h60a4 4 0 0 1 4 4Z"/></svg>
                             </button>
                         </div>
                         <div id="share-message" class="text-sm text-green-700 mt-2 hidden">Link copied to clipboard!</div>
@@ -213,7 +216,7 @@
             </div>
         </main>
 
-        <!-- How It Works Page (Hidden by default) -->
+        <!-- How It Works Page -->
         <section id="how-it-works-page" class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 hidden transition-transform duration-300">
             <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">How It Works</h2>
             <div class="space-y-10">
@@ -246,7 +249,7 @@
                     <div class="accordion-item rounded-xl overflow-hidden shadow-sm border border-gray-200">
                         <button class="accordion-button">
                             <span>How accurate is the compatibility check?</span>
-                            <i class="ph-bold ph-plus text-lg accordion-icon"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ph-plus text-lg accordion-icon w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M228 128a12 12 0 0 1-12 12h-80v80a12 12 0 0 1-24 0v-80H40a12 12 0 0 1 0-24h80V40a12 12 0 0 1 24 0v80h80a12 12 0 0 1 12 12Z"/></svg>
                         </button>
                         <div class="accordion-content">
                             <p class="text-gray-600 leading-relaxed">Our AI model is trained on a vast amount of technical data to provide highly accurate analyses. However, we always recommend double-checking the product specifications before making a purchase, as new products are released daily.</p>
@@ -254,8 +257,26 @@
                     </div>
                     <div class="accordion-item rounded-xl overflow-hidden shadow-sm border border-gray-200">
                         <button class="accordion-button">
+                            <span>Is this service free to use?</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ph-plus text-lg accordion-icon w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M228 128a12 12 0 0 1-12 12h-80v80a12 12 0 0 1-24 0v-80H40a12 12 0 0 1 0-24h80V40a12 12 0 0 1 24 0v80h80a12 12 0 0 1 12 12Z"/></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <p class="text-gray-600 leading-relaxed">Yes, Compatify is a completely free service. We are supported by the affiliate links you see in the product recommendations. There is no cost to you to use the compatibility checker.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                        <button class="accordion-button">
+                            <span>What if the analysis is wrong?</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ph-plus text-lg accordion-icon w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M228 128a12 12 0 0 1-12 12h-80v80a12 12 0 0 1-24 0v-80H40a12 12 0 0 1 0-24h80V40a12 12 0 0 1 24 0v80h80a12 12 0 0 1 12 12Z"/></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <p class="text-gray-600 leading-relaxed">Our AI model is highly accurate, but it's not perfect. Technology is constantly changing, and new products are released frequently. If you believe the analysis is incorrect, please feel free to send us feedback. We recommend always double-checking product specifications before making a final purchase.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                        <button class="accordion-button">
                             <span>Why are there affiliate links?</span>
-                            <i class="ph-bold ph-plus text-lg accordion-icon"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ph-plus text-lg accordion-icon w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M228 128a12 12 0 0 1-12 12h-80v80a12 12 0 0 1-24 0v-80H40a12 12 0 0 1 0-24h80V40a12 12 0 0 1 24 0v80h80a12 12 0 0 1 12 12Z"/></svg>
                         </button>
                         <div class="accordion-content">
                             <p class="text-gray-600 leading-relaxed">The affiliate links help support this free service. When you make a purchase through one of our links, we may earn a small commission at no extra cost to you. This allows us to keep the site running and continue to improve the service for everyone.</p>
@@ -267,11 +288,61 @@
 
         <!-- About Us Page (Hidden by default) -->
         <section id="about-us-page" class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 hidden transition-transform duration-300">
-            <h2 class="text-4xl font-bold text-gray-900 mb-6 text-center">About Us</h2>
-            <div class="prose max-w-none text-gray-700 leading-relaxed text-center space-y-4">
-                <p>Welcome to Compatify, where we believe that technology should be simple and seamless. We know the frustration of buying a new accessory only to find out it doesn't work with your device. That's why we created Compatify—a fast, free, and reliable tool to check compatibility for you.</p>
-                <p>Our mission is to take the guesswork out of tech purchases. We're a small team of developers and tech enthusiasts committed to making your digital life easier. The core of our service is powered by the latest advancements in AI, which allows us to provide accurate, on-the-spot analysis for a huge range of products.</p>
-                <p>We're passionate about helping you get the most out of your technology. Thank you for using Compatify!</p>
+            <!-- Hero Section -->
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Our Story</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto"><strong>Welcome to Compatify — where simplicity meets smart technology.</strong> We're a team of developers and tech enthusiasts committed to solving real-world problems.</p>
+            </div>
+
+            <!-- Mission Statement Section -->
+            <div class="bg-blue-50 p-8 rounded-2xl shadow-inner border border-blue-200 mb-12 text-center">
+                <div class="inline-flex p-3 bg-blue-200 text-blue-700 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M168 224a8 8 0 0 1-8 8a104 104 0 0 1-104-104a8 8 0 0 1 16 0a88 88 0 0 0 88 88a8 8 0 0 1 8 8Z"/><path fill="currentColor" d="M224 88a8 8 0 0 0-8-8H40a8 8 0 0 0 0 16h176a8 8 0 0 0 8-8Z"/><path fill="currentColor" d="M224 168a8 8 0 0 0-8 8a88.1 88.1 0 0 1-88 88a8 8 0 0 0 0 16a104.1 104.1 0 0 0 104-104a8 8 0 0 0-8-8Z"/><path fill="currentColor" d="M40 88a8 8 0 0 0-8 8a104 104 0 0 0 104 104a8 8 0 0 0 0-16a88.1 88.1 0 0 1-88-88a8 8 0 0 0-8-8Z"/><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m0 200a92 92 0 1 1 92-92a92.1 92.1 0 0 1-92 92Z"/></svg>
+                </div>
+                <h3 class="text-3xl font-bold text-blue-900 mb-3">Our Mission</h3>
+                <p class="text-gray-700 max-w-2xl mx-auto">Our mission is simple: to take the guesswork out of tech purchases. We created Compatify because we know how frustrating it is to buy an accessory, cable, or gadget—only to realize it's not compatible with your device. We believe technology should just work.</p>
+            </div>
+
+            <!-- Philosophy Section -->
+            <div class="mb-12">
+                <h3 class="text-3xl font-bold text-gray-900 mb-8 text-center">Our Philosophy</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-center transition-transform hover:scale-105">
+                        <div class="inline-flex p-3 bg-gray-200 text-gray-700 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m-3.41 161.43a12 12 0 0 1-17-17l19.5-19.5a44 44 0 0 0-16.71-38.38l-1.39-.75a12 12 0 0 1 9.4-21.4a68 68 0 0 1 29.56 12.33a68 68 0 0 1 12.33 29.55a12 12 0 0 1-21.4 9.4l-1.39-.74a44 44 0 0 0-16.71 38.37l-1.5 1.5a12 12 0 0 1-17 0Z"/></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Simplicity</h4>
+                        <p class="text-gray-600 text-sm">We design tools that are intuitive and easy to use, so you can focus on what matters.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-center transition-transform hover:scale-105">
+                        <div class="inline-flex p-3 bg-gray-200 text-gray-700 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m36.71 77.13a12 12 0 0 1-17 17l-43-43a12 12 0 0 1 17-17l43 43Zm-73.42 122.28a12 12 0 0 1-17-17l-43 43a12 12 0 0 1 17 17l43-43Zm13.4-17.5a12 12 0 0 1-17 17l-43-43a12 12 0 0 1 17-17l43 43Z"/></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Accuracy</h4>
+                        <p class="text-gray-600 text-sm">Our AI is trained on vast datasets to provide highly accurate and reliable results.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-center transition-transform hover:scale-105">
+                        <div class="inline-flex p-3 bg-gray-200 text-gray-700 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.12 108.12 0 0 0 128 20m52.12 165.73a8 8 0 0 1-10.24 3.73a72 72 0 0 0-111.76 0a8 8 0 0 1-10.24-3.73a96 96 0 1 1 132.24 0ZM128 140a36 36 0 1 1 36-36a36 36 0 0 1-36 36Zm-36-36a36 36 0 0 1 72 0a36 36 0 0 1-72 0Z"/></svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Community</h4>
+                        <p class="text-gray-600 text-sm">We're built by tech lovers for tech lovers, and we're always listening to your feedback.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Section -->
+            <div class="bg-blue-50 p-8 rounded-2xl shadow-inner border border-blue-200 text-center">
+                <h3 class="text-3xl font-bold text-blue-900 mb-4">We'd Love to Hear From You</h3>
+                <p class="text-gray-700 max-w-2xl mx-auto mb-6">Whether you spotted a bug, have an idea for a new feature, or just want to say hi, your feedback is what helps us grow. Feel free to reach out anytime.</p>
+                <a href="mailto:compatifytools@gmail.com" class="inline-flex items-center px-8 py-3 bg-blue-600 text-white font-bold rounded-full shadow-md hover:bg-blue-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" viewBox="0 0 256 256"><path fill="currentColor" d="M224 48H32a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h192a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16m-8 12.38V64h-18.7l-75.14 75.14a8 8 0 0 1-11.32 0L59.18 64H32v128h192V64.38ZM128 148.64l84.45-84.45a8 8 0 0 1 11.32 11.31L139.31 160a8 8 0 0 1-11.32 0L32.22 75.5a8 8 0 0 1 11.32-11.31Z"/></svg>
+                    Send us an email
+                </a>
+            </div>
+
+            <div class="mt-12 text-center text-gray-600 font-semibold">
+                —The CompatifyTools Team
             </div>
         </section>
     </div>
@@ -313,8 +384,7 @@
 
         // --- DOM Element References ---
         const analyzeBtn = document.getElementById('analyzeBtn');
-        const itemAInput = document.getElementById('itemA');
-        const itemBInput = document.getElementById('itemB');
+        const inputContainer = document.getElementById('input-container');
         const resultsDiv = document.getElementById('resultsDiv');
         const compatibilityStatus = document.getElementById('compatibilityStatus');
         const compatibilitySummary = document.getElementById('compatibilitySummary');
@@ -331,6 +401,7 @@
         const shareDiv = document.getElementById('shareDiv');
         const shareMessageDiv = document.getElementById('share-message');
         const productRecommendationTitle = document.getElementById('productRecommendationTitle');
+        const addDeviceBtn = document.getElementById('addDeviceBtn');
 
         // Page and Navigation elements
         const homePage = document.getElementById('home-page');
@@ -368,19 +439,20 @@
         }
 
         // Main function to call the API with a detailed prompt and handle the response.
-        async function getCompatibilityAnalysis(itemA, itemB, affiliateProducts) {
+        async function getCompatibilityAnalysis(items, affiliateProducts) {
+            const itemsList = items.map(item => `- ${item}`).join('\n');
+
             const prompt = `
-                You are a helpful assistant that analyzes the compatibility of two items and suggests a relevant affiliate product from a list.
+                You are a helpful assistant that analyzes the compatibility of multiple items and suggests a relevant affiliate product from a list.
 
                 User's Items:
-                - Item A: ${itemA}
-                - Item B: ${itemB}
+                ${itemsList}
 
                 Affiliate Products JSON:
                 ${JSON.stringify(affiliateProducts, null, 2)}
 
                 Instructions:
-                1.  Analyze the compatibility between "Item A" and "Item B".
+                1.  Analyze the compatibility between all the items.
                 2.  Provide a clear, one-word compatibility status: "Compatible" or "Not Compatible".
                 3.  Write a very short summary (one sentence) explaining the outcome. If compatible, say "No issues found." or something similar and encouraging. If not compatible, briefly state the core issue.
                 4.  Provide a detailed description of the compatibility analysis, including technical details and why the items work or don't work together. This description should be formatted using simple Markdown.
@@ -498,8 +570,10 @@
 
         // --- Core Logic for Compatibility Check ---
         const runCompatibilityCheck = async () => {
-            const itemA = itemAInput.value.trim();
-            const itemB = itemBInput.value.trim();
+            // Get all input values and filter out empty ones
+            const items = Array.from(inputContainer.querySelectorAll('input[type="text"]'))
+                               .map(input => input.value.trim())
+                               .filter(value => value !== '');
 
             // Clear previous results and errors
             compatibilityStatus.textContent = '';
@@ -515,22 +589,12 @@
             shareDiv.classList.add('hidden');
 
             // --- Updated Validation Logic ---
-            if (itemA === '' && itemB === '') {
+            if (items.length < 2) {
                 errorMessageSpan.textContent = "You need at least two devices to run a check.";
                 errorBoxDiv.classList.remove('hidden');
                 return;
-            } else if (itemA === '') {
-                errorMessageSpan.textContent = "Please enter the first item.";
-                errorBoxDiv.classList.remove('hidden');
-                itemAInput.focus();
-                return;
-            } else if (itemB === '') {
-                errorMessageSpan.textContent = "Please enter the second item.";
-                errorBoxDiv.classList.remove('hidden');
-                itemBInput.focus();
-                return;
             }
-
+            
             // Show loading animation and disable button
             loadingDiv.classList.remove('hidden');
             analyzeBtn.disabled = true;
@@ -548,7 +612,7 @@
                 const affiliateProducts = await getAffiliateProducts();
 
                 // Call the API with the user's input and product data
-                const apiResponse = await getCompatibilityAnalysis(itemA, itemB, affiliateProducts);
+                const apiResponse = await getCompatibilityAnalysis(items, affiliateProducts);
 
                 // Update the compatibility status and summary
                 compatibilityStatus.textContent = apiResponse.status;
@@ -575,7 +639,7 @@
 
                 // --- Fallback Recommendation Logic ---
                 if (!recommendedProduct) {
-                    const searchKeywords = (itemA + ' ' + itemB).toLowerCase().split(' ').filter(word => word.length > 2);
+                    const searchKeywords = items.join(' ').toLowerCase().split(' ').filter(word => word.length > 2);
                     recommendedProduct = affiliateProducts.find(product =>
                         product.compatibility_tags.some(tag =>
                             searchKeywords.some(keyword => tag.toLowerCase().includes(keyword))
@@ -621,18 +685,32 @@
 
         // Listener for "Run Check" button
         analyzeBtn.addEventListener('click', runCompatibilityCheck);
-
-        // Event listener for the "Enter" key on the input fields
-        itemAInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                runCompatibilityCheck();
-            }
-        });
         
-        itemBInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                runCompatibilityCheck();
-            }
+        // Listener for "Add Device" button
+        addDeviceBtn.addEventListener('click', () => {
+            const newItemInput = document.createElement('input');
+            newItemInput.type = 'text';
+            newItemInput.placeholder = 'e.g., Apple Watch';
+            newItemInput.className = 'flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700';
+            
+            newItemInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    runCompatibilityCheck();
+                }
+            });
+            
+            // Insert the new input field before the add button
+            inputContainer.insertBefore(newItemInput, addDeviceBtn);
+        });
+
+        // Event listeners for the "Enter" key on the input fields
+        // This is now handled dynamically for all new inputs
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    runCompatibilityCheck();
+                }
+            });
         });
 
         // Listeners for "Try It Out!" examples
@@ -641,11 +719,32 @@
                 const buttonText = e.target.textContent;
                 const matches = buttonText.match(/Try: (.*) & (.*)/);
                 if (matches && matches.length === 3) {
-                    itemAInput.value = matches[1].trim();
-                    itemBInput.value = matches[2].trim();
+                    // Clear existing inputs and add new ones
+                    inputContainer.innerHTML = `
+                        <input type="text" placeholder="e.g., MacBook Pro" class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700" value="${matches[1].trim()}">
+                        <input type="text" placeholder="e.g., HDMI Cord" class="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700" value="${matches[2].trim()}">
+                        <button id="addDeviceBtn" title="Add another device" class="p-4 bg-blue-100 text-blue-600 rounded-xl shadow-lg hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-blue-200 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" class="w-6 h-6"><path fill="currentColor" d="M228 128a12 12 0 0 1-12 12h-80v80a12 12 0 0 1-24 0v-80H40a12 12 0 0 1 0-24h80V40a12 12 0 0 1 24 0v80h80a12 12 0 0 1 12 12Z"/></svg>
+                        </button>
+                    `;
+                    // Re-attach event listeners after DOM manipulation
+                    document.getElementById('addDeviceBtn').addEventListener('click', () => {
+                        const newItemInput = document.createElement('input');
+                        newItemInput.type = 'text';
+                        newItemInput.placeholder = 'e.g., Apple Watch';
+                        newItemInput.className = 'flex-1 p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-700';
+                        
+                        newItemInput.addEventListener('keydown', (event) => {
+                            if (event.key === 'Enter') {
+                                runCompatibilityCheck();
+                            }
+                        });
+                        inputContainer.insertBefore(newItemInput, document.getElementById('addDeviceBtn'));
+                    });
                 } else {
-                    itemAInput.value = e.target.dataset.itemA;
-                    itemBInput.value = e.target.dataset.itemB;
+                    // Fallback for data attributes
+                    itemA.value = e.target.dataset.itemA;
+                    itemB.value = e.target.dataset.itemB;
                 }
                 runCompatibilityCheck(); // Trigger the analysis
             });
@@ -654,7 +753,11 @@
         // Listeners for social sharing buttons
         document.getElementById('share-twitter').addEventListener('click', () => {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent(`Just checked the compatibility of "${itemAInput.value}" and "${itemBInput.value}" using Compatify! It works great!`);
+            const items = Array.from(inputContainer.querySelectorAll('input[type="text"]'))
+                               .map(input => `"${input.value.trim()}"`)
+                               .filter(value => value !== '""')
+                               .join(' and ');
+            const text = encodeURIComponent(`Just checked the compatibility of ${items} using Compatify! It works great!`);
             window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
         });
 
@@ -666,7 +769,10 @@
         document.getElementById('share-linkedin').addEventListener('click', () => {
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent("Tech Compatibility Checker");
-            const summary = encodeURIComponent(`I used Compatify to check the compatibility of ${itemAInput.value} and ${itemBInput.value}!`);
+            const items = Array.from(inputContainer.querySelectorAll('input[type="text"]'))
+                               .map(input => input.value.trim())
+                               .filter(value => value !== '');
+            const summary = encodeURIComponent(`I used Compatify to check the compatibility of ${items.join(' and ')}!`);
             window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank');
         });
         
@@ -701,4 +807,5 @@
     </script>
 </body>
 </html>
+
 
